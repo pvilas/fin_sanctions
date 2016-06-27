@@ -30,6 +30,19 @@ class CalendarType(db.Enum):
     E = "Ethiopic"
 
 
+def FK(model, nullable=False):
+    """ constructs a fk column to the id field of the model model
+        @model db.Model
+        @nullable default false
+    """
+    return db.Column(db.ForeignKey(model.__tablename__ + '.id'), nullable=nullable)
+
+
+def ST(length=DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=False):
+    """ constructs a column of type string """
+    return db.Column(db.String(length), nullable=nullable, primary_key=primary_key)
+
+
 class LegalBasis(db.Model):
     """ The regulation summary is a type that contains the main information
         about a regulation. """
@@ -42,25 +55,22 @@ class LegalBasis(db.Model):
 class Country(db.Model):
     """ iso3 country code """
     __tablename__ = 'country'
-    id = db.Column(db.String(3), primary_key=True)
-    description = db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN),
-                            nullable=False)
+    id = ST(3, nullable=False, primary_key=True)
+    description = ST(DEFAULT_DESCRIPTION_TYPE_LEN)
 
 
 class Language(db.Model):
     """iso language code """
     __tablename__ = 'language'
-    id = db.Column(db.String(2), primary_key=True)
-    description = db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN),
-                            nullable=False)
+    id = ST(2, nullable=False, primary_key=True)
+    description = ST(DEFAULT_DESCRIPTION_TYPE_LEN)
 
 
 class Programme(db.Model):
     """ eu programme code (seems iso3) """
     __tablename__ = 'programme'
-    id = db.Column(db.String(DEFAULT_CODE_TYPE_LEN), primary_key=True)
-    description = db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN),
-                            nullable=True)
+    id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
+    description = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
 
 
 class Place(db.Model):
@@ -69,60 +79,49 @@ class Place(db.Model):
     __tablename__ = 'place'
     id = db.Column(db.Integer(), primary_key=True)  # autoincremental
     # content of the place tag
-    description = db.Column(
-        db.String(DEFAULT_DESCRIPTION_TYPE_LEN), nullable=False)
+    description = ST(DEFAULT_DESCRIPTION_TYPE_LEN, False)
 
 
 class Entity(db.Model):
     """ Base class for an entity """
     __tablename__ = 'entity'
-    id = db.Column(db.String(DEFAULT_CODE_TYPE_LEN), primary_key=True)
+    id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
     ent_type = db.Column(db.Enum('P', 'E'), nullable=False)
-    legal_basis_id = db.Column(db.ForeignKey('legalbasis.id'), nullable=False)
-    programme = db.Column(db.ForeignKey('programme.id'), nullable=False)
+    legal_basis_id = FK(LegalBasis)
+    programme = FK(Programme)
     remark = db.Column(db.Text())
 
 
 class Birth(db.Model):
     """ birth date for an entity """
     __tablename__ = 'birth'
-    id = db.Column(db.String(DEFAULT_CODE_TYPE_LEN),
-                   nullable=False,
-                   primary_key=True)  # list code id
-    entity_id = db.Column(db.ForeignKey('entity.id'), nullable=False)
+    id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
+    entity_id = FK(Entity)
     date = db.Column(db.Date(), nullable=False)
-    legal_basis_id = db.Column(db.ForeignKey('legalbasis.id'), nullable=False)
-    place_id = db.Column(db.ForeignKey('place.id'), nullable=True)
-    country = db.Column(db.ForeignKey('country.id'), nullable=True)
+    legal_basis_id = FK(LegalBasis, False)
+    place_id = FK(Place, True)
+    country = FK(Country, True)
 
 
 class Passport(db.Model):
     """ a passport of an entity"""
     __tablename__ = 'passport'
-    id = db.Column(db.String(DEFAULT_CODE_TYPE_LEN),
-                   nullable=False,
-                   primary_key=True)  # list code id
-    entity_id = db.Column(db.ForeignKey('entity.id'), nullable=False)
-    legal_basis_id = db.Column(db.ForeignKey('legalbasis.id'), nullable=False)
-    country = db.Column(db.ForeignKey('country.id'), nullable=True)
-    number = db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN))
+    id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
+    number = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)  # passport number
+    entity_id = FK(Entity)
+    legal_basis = FK(LegalBasis)
 
 
 class Name(db.Model):
     """ a name of an entity """
     __tablename__ = 'name'
-    id = db.Column(db.String(DEFAULT_CODE_TYPE_LEN),
-                   nullable=False,
-                   primary_key=True)  # list code id
-    entity_id = db.Column(db.ForeignKey('entity.id'), nullable=False)
-    legal_basis_id = db.Column(db.ForeignKey('legalbasis.id'), nullable=False)
-    last_name = db.Column(
-        db.String(DEFAULT_DESCRIPTION_TYPE_LEN), nullable=True)
-    first_name = db.Column(
-        db.String(DEFAULT_DESCRIPTION_TYPE_LEN), nullable=True)
-    whole_name = db.Column(
-        db.String(DEFAULT_DESCRIPTION_TYPE_LEN), nullable=True)
+    id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
+    entity_id = FK(Entity)
+    legal_basis = FK(LegalBasis)
+    last_name = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+    first_name = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+    whole_name = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+    title = ST(DEFAULT_CODE_TYPE_LEN, True)
     gender = db.Column(db.Enum('M', 'F'), nullable=True)
-    title = db.Column(db.String(DEFAULT_CODE_TYPE_LEN), nullable=True)
     function = db.Column(db.Text(), nullable=True)
-    language = db.Column(db.ForeignKey('entity.id'), nullable=True)
+    language = FK(Language, True)

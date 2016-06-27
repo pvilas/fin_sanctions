@@ -37,7 +37,7 @@ pip install Flask-SQLAlchemy
 pip install Flask-security
 ```
 
-Optional: If you use Sublime Text editor, make link on the local directory
+> Optional: If you like to use Sublime Text editor, make link on the local directory
 ```
 ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/sublime
 sublime .
@@ -53,7 +53,7 @@ source make_db.sh
 If none error happens, you would take a look at the database structure
 ```
 sqlite3 fin_sanctions/list.db
-.table
+.tables
 .quit
 ```
 
