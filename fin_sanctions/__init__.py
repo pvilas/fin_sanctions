@@ -1,5 +1,5 @@
-""" App entry point """
 # -*- coding: utf-8 -*-
+""" App entry point """
 
 import os
 from flask import Flask
@@ -18,7 +18,7 @@ db = SQLAlchemy(app)
 # convert_unicode=True)
 
 import views
-
+import models  # import models, so tables are automatically created
 
 """
 from database import db_session

@@ -1,5 +1,5 @@
-""" views controller """
 # -*- coding: utf-8 -*-
+""" views controller """
 
 from fin_sanctions import app
 

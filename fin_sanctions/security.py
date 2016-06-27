@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+
+""" access security """
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore, \
     UserMixin, RoleMixin, login_required
-from gestion_flask import app, db
+from fin_sanctions import app, db
 
 # feim que es trakejin els users
 app.config['SECURITY_TRACKABLE'] = True

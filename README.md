@@ -16,8 +16,54 @@ We use the Levenshtein distance in order to detect matches. We can pass the dist
 
 ## Installation
 
+Clone fin_sanctions
+```
+git clone https://github.com/pvilas/fin_sanctions
+```
 
-I like to use Sublime Text
+Install and activate the python virtual environment
+```
+cd fin_sanctions
+sudo pip install python-virtualenv
+virtualenv venv
+. venv/bin/activate 
+```
+
+Install required packages
+```
+pip install Flask
+pip install Flask-admin
+pip install Flask-SQLAlchemy
+pip install Flask-security
+```
+
+Optional: If you use Sublime Text editor, make link on the local directory
 ```
 ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/sublime
+sublime .
 ```
+
+Now you can create the database, sqlite by default. Follow the script instructions.
+Each time you run make_db the script tries to make a backup before to recreate the db,
+so the first time will report an error, just ignore.
+```
+source make_db.sh
+```
+
+If none error happens, you would take a look at the database structure
+```
+sqlite3 fin_sanctions/list.db
+.table
+.quit
+```
+
+
+Run the flask server
+```
+source run.sh
+```
+
+
+
+
+

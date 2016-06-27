@@ -1,6 +1,7 @@
-""" Modeling EU XSD to sqlalchemy """
 # -*- coding: utf-8 -*-
-from fin_sanctions import db
+""" Modeling EU XSD to sqlalchemy """
+from fin_sanctions import app, db
+from sqlalchemy import create_engine, MetaData
 
 DEFAULT_CODE_TYPE_LEN = 32
 DEFAULT_DESCRIPTION_TYPE_LEN = 256
@@ -32,6 +33,7 @@ class CalendarType(db.Enum):
 class LegalBasis(db.Model):
     """ The regulation summary is a type that contains the main information
         about a regulation. """
+    __tablename__ = 'legalbasis'
     id = db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN), primary_key=True)
     reg_date = db.Column(db.Date(), nullable=False)
     pdf_link = db.Column(db.String(DEFAULT_URL_TYPE_LEN), nullable=False)
@@ -39,6 +41,7 @@ class LegalBasis(db.Model):
 
 class Country(db.Model):
     """ iso3 country code """
+    __tablename__ = 'country'
     id = db.Column(db.String(3), primary_key=True)
     description = db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN),
                             nullable=False)
@@ -46,6 +49,7 @@ class Country(db.Model):
 
 class Language(db.Model):
     """iso language code """
+    __tablename__ = 'language'
     id = db.Column(db.String(2), primary_key=True)
     description = db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN),
                             nullable=False)
@@ -53,6 +57,7 @@ class Language(db.Model):
 
 class Programme(db.Model):
     """ eu programme code (seems iso3) """
+    __tablename__ = 'programme'
     id = db.Column(db.String(DEFAULT_CODE_TYPE_LEN), primary_key=True)
     description = db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN),
                             nullable=True)
@@ -61,6 +66,7 @@ class Programme(db.Model):
 class Place(db.Model):
     """ convenience model to filter by place of birth.
         Place comes from Birth """
+    __tablename__ = 'place'
     id = db.Column(db.Integer(), primary_key=True)  # autoincremental
     # content of the place tag
     description = db.Column(
@@ -69,15 +75,17 @@ class Place(db.Model):
 
 class Entity(db.Model):
     """ Base class for an entity """
+    __tablename__ = 'entity'
     id = db.Column(db.String(DEFAULT_CODE_TYPE_LEN), primary_key=True)
-    ent_type = db.Enum(EntityType)
+    ent_type = db.Column(db.Enum('P', 'E'), nullable=False)
     legal_basis_id = db.Column(db.ForeignKey('legalbasis.id'), nullable=False)
-    programme = db.Column(db.ForeignKey('programmes.id'), nullable=False)
+    programme = db.Column(db.ForeignKey('programme.id'), nullable=False)
     remark = db.Column(db.Text())
 
 
 class Birth(db.Model):
     """ birth date for an entity """
+    __tablename__ = 'birth'
     id = db.Column(db.String(DEFAULT_CODE_TYPE_LEN),
                    nullable=False,
                    primary_key=True)  # list code id
@@ -90,6 +98,7 @@ class Birth(db.Model):
 
 class Passport(db.Model):
     """ a passport of an entity"""
+    __tablename__ = 'passport'
     id = db.Column(db.String(DEFAULT_CODE_TYPE_LEN),
                    nullable=False,
                    primary_key=True)  # list code id
@@ -101,6 +110,7 @@ class Passport(db.Model):
 
 class Name(db.Model):
     """ a name of an entity """
+    __tablename__ = 'name'
     id = db.Column(db.String(DEFAULT_CODE_TYPE_LEN),
                    nullable=False,
                    primary_key=True)  # list code id
@@ -112,7 +122,7 @@ class Name(db.Model):
         db.String(DEFAULT_DESCRIPTION_TYPE_LEN), nullable=True)
     whole_name = db.Column(
         db.String(DEFAULT_DESCRIPTION_TYPE_LEN), nullable=True)
-    gender = db.Enum(GenderType, nullable=True)
+    gender = db.Column(db.Enum('M', 'F'), nullable=True)
     title = db.Column(db.String(DEFAULT_CODE_TYPE_LEN), nullable=True)
     function = db.Column(db.Text(), nullable=True)
     language = db.Column(db.ForeignKey('entity.id'), nullable=True)

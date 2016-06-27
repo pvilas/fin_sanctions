@@ -1,5 +1,5 @@
-""" site administration """
 # -*- coding: utf-8 -*-
+""" site administration """
 
 from fin_sanctions import app, db
 from flask_admin import Admin
