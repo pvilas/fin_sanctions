@@ -1,0 +1,7 @@
+{
+   "python_interpreter": "$VIRTUAL_ENV/bin/python2.7",,
+   "extra_paths":
+		[
+			"$VIRTUAL_ENV/lib/python2.7/site-packages"
+		],
+}

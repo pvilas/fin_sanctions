@@ -14,3 +14,10 @@ We use the Levenshtein distance in order to detect matches. We can pass the dist
 - [US](https://www.treasury.gov/ofac/downloads/consolidated/consolidated.xml)
 
 
+## Installation
+
+
+I like to use Sublime Text
+```
+ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/sublime
+```

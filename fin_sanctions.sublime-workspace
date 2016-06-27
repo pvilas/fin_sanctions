@@ -1,0 +1,543 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"E",
+				"Enum	class"
+			],
+			[
+				"DEFA",
+				"DEFAULT_DESCRIPTION_TYPE_LEN	statement"
+			],
+			[
+				"DE",
+				"DEFAULT_URL_TYPE_LEN	statement"
+			],
+			[
+				"C",
+				"Column"
+			],
+			[
+				"deLis",
+				"delistingDate"
+			],
+			[
+				"def",
+				"def_desc_type"
+			],
+			[
+				"public",
+				"publicationDate"
+			],
+			[
+				"remark",
+				"remark_type"
+			],
+			[
+				"de",
+				"def_desc_type"
+			],
+			[
+				"add",
+				"additional"
+			],
+			[
+				"additiona",
+				"AdditionalInfo"
+			],
+			[
+				"logg",
+				"logger"
+			],
+			[
+				"Es",
+				"Estribancus"
+			],
+			[
+				"perma",
+				"permalink"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "fin_sanctions/lists/un.xml",
+			"settings":
+			{
+				"buffer_size": 1915851,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "fin_sanctions/er.md",
+			"settings":
+			{
+				"buffer_size": 1338,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "fin_sanctions/models.py",
+			"settings":
+			{
+				"buffer_size": 1351,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "fin_sanctions/__init__.py",
+			"settings":
+			{
+				"buffer_size": 594,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 367.0,
+		"last_filter": "Package Control: ",
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"pac",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"Bookmarks: Toggle"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions"
+	],
+	"file_history":
+	[
+		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions.sublime-project",
+		"/Users/pvilas/codigo/fin_sanctions/README.md",
+		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions/__init__.py",
+		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions/models.py",
+		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions/lists/global.xml",
+		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions/lists/fsdexport-1.0.xsd.txt",
+		"/Users/pvilas/Library/Application Support/Sublime Text 3/Packages/Pylinter/Pylinter.sublime-settings",
+		"/Users/pvilas/codigo/gestion-flask/gestion_flask/models.py",
+		"/Users/pvilas/Library/Application Support/Sublime Text 3/Packages/Pylinter/Default (OSX).sublime-keymap",
+		"/Users/pvilas/codigo/spa/telefono/telefono.py",
+		"/Users/pvilas/Library/Application Support/Sublime Text 3/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/pvilas/Library/Application Support/Sublime Text 3/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/pvilas/Library/Application Support/Sublime Text 3/Packages/User/JSON.sublime-settings",
+		"/Users/pvilas/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/pvilas/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/pvilas/codigo/proves-flask/README.md",
+		"/Users/pvilas/codigo/varis/sms/prova.py",
+		"/Users/pvilas/Dropbox/Casino/nova-centraleta/pendents config 2016-05-06.md",
+		"/Users/pvilas/Documents/errors-controladora-cisco.txt",
+		"/Users/pvilas/Dropbox/Casino/nova-centraleta/pendents-config-2016-04-27.md",
+		"/Users/pvilas/Dropbox/Telecos/2016 - Elec comuniccions/PACS/PAC2/PAC2-entrega.md",
+		"/Users/pvilas/Dropbox/Telecos/2016 - Elec comuniccions/PACS/untitled folder/PAC2-entrega.md",
+		"/Users/pvilas/Dropbox/Telecos/2016 - Proc Audio/PACS/PAC2/PAC2.md",
+		"/Users/pvilas/Downloads/joan.vcf",
+		"/Users/pvilas/Dropbox/Casino/informeVoIP/VoIP.md",
+		"/Users/pvilas/Library/Application Support/Sublime Text 3/Packages/User/Markdown.sublime-settings",
+		"/Users/pvilas/Dropbox/Casino/Informe Instalacion de telefonia IP en Calida Ibiza.md",
+		"/Users/pvilas/codigo/pvilas.github.io/contact.html",
+		"/Users/pvilas/codigo/pvilas.github.io/about.md",
+		"/Users/pvilas/codigo/pvilas.github.io/_includes/navigation.html",
+		"/Users/pvilas/codigo/pvilas.github.io/CNAME",
+		"/Users/pvilas/codigo/pvilas.github.io/_config.yml",
+		"/Users/pvilas/codigo/pvilas.github.io/_includes/head.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_includes/footer.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/2016-01-05-jekyll-crear-indice.md",
+		"/Users/pvilas/codigo/pvilas.github.io/archive.md",
+		"/Users/pvilas/codigo/pvilas.github.io/_drafts/2016-01-20-falta-al-blog.md",
+		"/Users/pvilas/codigo/pvilas.github.io/_includes/archive_tag.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_includes/archive_postlisting.html",
+		"/Users/pvilas/codigo/pvilas.github.io/thanks.md",
+		"/Users/pvilas/codigo/pvilas.github.io/_drafts/2014-09-19-La-distribución-de-Poisson-explicada-fácil.md",
+		"/Users/pvilas/codigo/pvilas.github.io/_data/tags.yml",
+		"/Users/pvilas/codigo/pvilas.github.io/_includes/post_footer.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/2011-01-01-entradas-del-2011.md",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/2010-01-01-entrades-2010.md",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/2015-12-31-migrar-github-pages-desde-blogger.md",
+		"/Users/pvilas/codigo/migrar-blogger/_posts/2015-11-13-django-modelo-de-datos-generico-usando.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/2015-12-31-virtualenv-python3-django.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-06-06-opciones-para-programacion-con-vi-vim.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-08-03-la-suma-de-la-serie-de-los-primeros-n.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-08-08-el-futuro-de-django.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-09-09-campos-de-un-modelo-en-django.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-10-10-uso-correcto-de-super-en-python.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-10-20-Retrasado-primer-lanzamiento-Soyuz-desde-Guayana.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-10-24-La-Coalicion-de-la-Voluntad.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-10-26-Archivo-historico-de-la-Royal-Society-de-acceso-libre.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-10-29-Copia-de-seguridad-en-pdf-o-mobi-de-archivos-con-DRM-de-Adobe.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-11-02-Cita-de-Poincare.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-11-03-Format-a-pdf-file-for-Kindle-or-Kindle-DX.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-11-03-Formatear-pdf-para-Kindle-o-Kindle-DX.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-11-15-ebooks-de-EdicionesB.-Así-si..html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-11-18-Cargan-el-Mars-Science-Laboratoy-(MSL)-Curiosity-con-el-generador-de-radioisotopos.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-11-22-Encapsulado-del-Mars-Science-Laboratoy-(MSL)-\"Curiosity\".html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-11-23-tiempo-est-cet-cest.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-11-24-consultas-en-django.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-11-24-Copiar-pdf-a-iPhone-iPad-facil-ubuntu.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-11-25-Estado-de-la-Phobos-Grunt.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-12-05-Shell-en-django.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-12-21-Ibiza-Eivissa-en-google-street-view.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2011-12-27-Un-paseito-por-la-Luna.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-01-30-Obtener-valor-de-radiobutton-con-JQuery.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-02-07-Configurar-logging-en-python-y-django-con-yaml.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-02-11-Procesador-de-texto-Sublime-Text.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-02-12-Usar-subversion-en-windows-con-la-linea-de-comandos.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-02-12-Use-subversion-in-windows-with-the-command-line.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-02-24-Filtrado-facil-de-clave-foranea-en-una-ficha-de-django.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-02-27-Presentacion-del-vector-VEGA-de-la-ESA.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-02-29-Menor-de-edad-en-python--Legal-age-in-python.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-03-04-Con-que-dia-empieza-la-semana-en-python?-What's-the-first-day-of-the-week-in-python?.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-03-05-El-ATV3-Edoardo-Amaldi,-preparado-para-partir.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-03-08-Paso-de-parametros-a-programas-en-python--How-to-pass-parameters-to-a-python-program.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-03-11-Usar-cliente-Mysql-python-en-windows.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-03-16-El-cierre-de-library.nu-o-la-quema-de-la-biblioteca-de-Alejandria.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-03-22-Yet-another-apache-ssl-installation-manual-on-debian-ubuntu--Aun-otro-manual-de-instalacion-de-apache-ssl-en-debian-ubuntu.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-03-23-Apache-redireccionar-ciertas-ip-hacia-https.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-03-23-Apache-redirect-some-ip-to-https.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-04-23-Dado-un-numero-de-semana-¿Cual-es-la-fecha-del-lunes?--Given-an-(iso)-week-number,-Whats-the-date-of-Monday?.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-05-02-Copiar-bajo-ssh-scp.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-05-05-#sinCiencia-No-al-recorte-en-ciencia.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-05-24-De-la-idea-a-la-realidad.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-06-06-El-Lazarillo-de-Tormes.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-06-07-ubuntu-no-arranca-una-sesion-X-de-usuario.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-07-05-subversion-volver-a-una-version-anterior.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-07-27-Prevenir-el-borrado-de-objetos-via-clave-foranea--Prevent-object-deletion-via-foreign-key.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-08-02-Aun-otro-ejemplo-de-try.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-08-25-MSL-Navcams-my-first-anaglyph-(3D-image)--mi-primer-anaglifo-con-las-imagenes-de-las-navcams.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-08-31-MSL-Curiosity-NavCams-Anaglyph-Panorama-of-Bradbury-Landing-Site-Panorama-anaglifo-del-sitio-de-aterrizaje-Bradbury.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-10-04-Filtrar-entre-fechas-con-django.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-10-04-Los-versos-dorados-(o-aureos)-de-Pitagoras.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-10-08-Error-de-codificacion-de-caracteres-al-generar-pdf-con-django-y-pisa.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-10-08-Localizar-las-plantillas.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-10-08-Minimizar-y-maximizar-en-gnome3.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-10-17-Campos-calculados-en-django.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2012-12-22-Use-zip.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-02-21-entender-los-joins-sql-graficamente.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-02-24-ebooks-de-ingenieria.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-02-27-Acceso-remoto-a-servidor-Mysql.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-02-28-Depurar-procedimientos-almacenados-mysql.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-03-06-Backup-de-los-procedimientos.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-05-06-Eivissa-des-de-la-ISS-(Eivissa-from-the-ISS).html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-05-10-Buscar-en-ingles-con-google.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-05-11-Apache-httpd-CentOS-Certificate-not-verified-Server-Cert.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-05-12-Instalar-Django-en-Windows.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-05-12-Recurso-enseaanza-de-ingles.-Marco-Polo-R-Propuesta-europea-para-el-retorno-de-muestras-de-un-asteriode.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-06-20-Cançó-de-vesprada.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-06-20-Sondear-(refrescar)-a-largo-plazo-con-javascript-jquery--jquery-javascript-long-polling.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-06-21-Tiempo-EST,-CET,-CEST,-PST.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-07-01-Videos-de-Señales-y-Sistemas-de-Jose-Pablo-Alvarado-Moya.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-07-08-Guiado-de-un-cohete.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-07-10-Django-name-field-on-auth_permission-too-short.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-07-12-Calidad-de-imagen-en-cámaras-digitales:-La-aberración-cromática.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-07-15-Consola-linux-en-utf8-(debian,-ubuntu).html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-07-15-Django-error-\"name-field-too-short\"-generando-permisos-en-el-admin-si-verbose_name-está-presente.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-07-23-Django-filtro-de-query-usando-un-string.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-07-24-Mysql-borrado-rápido-filas-duplicadas.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-08-27-Django-cambiar-de-lenguaje-desde-el-view.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-08-30-Django-desde-un-template-llamar-a-un-procedimiento-del-primer-objeto-de-un-query.html",
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-09-28-ipython-Shell-python-científica.-Instalación..html"
+	],
+	"find":
+	{
+		"height": 25.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/Users/pvilas/codigo/pvilas.github.io/_posts"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"delisting_date",
+			"pylint",
+			"logger.debug",
+			"print",
+			"\n#",
+			"//",
+			"</script>",
+			"<span class=\"MathJax_Preview\"></span><span class=\"MathJax\" id=\"MathJax-Element-2780-Frame\" role=\"textbox\" aria-readonly=\"true\"><nobr><span class=\"math\" id=\"MathJax-Span-40210\" style=\"width: 0.625em; display: inline-block;\"><span style=\"display: inline-block; position: relative; width: 0.529em; height: 0px; font-size: 116%;\"><span style=\"position: absolute; clip: rect(1.727em 1000.002em 2.636em -0.477em); top: -2.296em; left: 0.002em;\"><span class=\"mrow\" id=\"MathJax-Span-40211\"><span class=\"mi\" id=\"MathJax-Span-40212\" style=\"font-family: MathJax_Math-italic;\">p</span></span><span style=\"display: inline-block; width: 0px; height: 2.301em;\"></span></span></span><span style=\"border-left-width: 0.003em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.836em; vertical-align: -0.275em;\"></span></span></nobr></span><script type=\"math/tex\" id=\"MathJax-Element-2780\">",
+			"P(X=k",
+			"tags:",
+			"feed",
+			"categories:",
+			"serve",
+			"jeckyl",
+			"{{coches",
+			"{%",
+			",",
+			"get_nombre_imagen",
+			"AdminImageWidget"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"logger.debug",
+			"categories:",
+			"tags:",
+			"",
+			";"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "fin_sanctions/lists/un.xml",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1915851,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1443822,
+								1443822
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.sublime-syntax",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 42910.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "fin_sanctions/er.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1338,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								750,
+								750
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "fin_sanctions/models.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1351,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								385,
+								385
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 122.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "fin_sanctions/__init__.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 594,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								170,
+								170
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 25.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/Python/Python.sublime-build",
+	"project": "fin_sanctions.sublime-project",
+	"replace":
+	{
+		"height": 46.0
+	},
+	"save_all_on_build": false,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 127.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 392.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 153.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
