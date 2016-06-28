@@ -2,6 +2,7 @@
 """ Modeling EU XSD to sqlalchemy """
 from fin_sanctions import app, db
 from sqlalchemy import create_engine, MetaData
+from datetime import datetime
 
 DEFAULT_CODE_TYPE_LEN = 32
 DEFAULT_DESCRIPTION_TYPE_LEN = 256
@@ -9,25 +10,10 @@ LARGE_DESCRIPTION_TYPE_LEN = 2048
 DEFAULT_URL_TYPE_LEN = 256
 
 
-class EntityType(db.Enum):
-    """ entity type """
-    P = "Person"
-    E = "Enterprise"
-
-
-class GenderType(db.Enum):
-    """ Entity gender if person """
-    M = "Male"
-    F = "Female"
-
-
-class CalendarType(db.Enum):
-    """ Calendar type """
-    G = "Gregorian"
-    I = "Islamic"
-    B = "Buddist"
-    C = "Coptic"
-    E = "Ethiopic"
+def iso_date(iso_string):
+    """ from iso string YYYY-MM-DD to python datetime.date """
+    d = datetime.strptime(iso_string, '%Y-%m-%d')
+    return d.date()
 
 
 def FK(model, nullable=False):
@@ -35,12 +21,14 @@ def FK(model, nullable=False):
         @model db.Model
         @nullable default false
     """
-    return db.Column(db.ForeignKey(model.__tablename__ + '.id'), nullable=nullable)
+    return db.Column(db.ForeignKey(model.__tablename__ + '.id'),
+                     nullable=nullable)
 
 
 def ST(length=DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=False):
     """ constructs a column of type string """
-    return db.Column(db.String(length), nullable=nullable, primary_key=primary_key)
+    return db.Column(db.String(length), nullable=nullable,
+                     primary_key=primary_key)
 
 
 class LegalBasis(db.Model):
@@ -86,10 +74,33 @@ class Entity(db.Model):
     """ Base class for an entity """
     __tablename__ = 'entity'
     id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
-    ent_type = db.Column(db.Enum('P', 'E'), nullable=False)
+    ent_type = db.Column(db.Enum('P', 'E', name='entity_type'), nullable=False)
     legal_basis_id = FK(LegalBasis)
     programme = FK(Programme)
     remark = db.Column(db.Text())
+
+    def __init__(self, id, ent_type,
+                 legal_basis, reg_date,
+                 pdf_link, programme, remark):
+        self.id = id
+        self.ent_type = ent_type
+        self.remark = remark
+
+        # test if legal_basis exists
+        lb = db.session.query(LegalBasis).filter(LegalBasis.id == legal_basis)
+        if lb is None:
+            lb = LegalBasis(legal_basis, iso_date(reg_date), pdf_link)
+        self.legal_basis_id = lb
+
+        # test if programme exists
+        pr = db.session.query(Programme).filter(Programme.id == programme)
+        if pr is None:
+            pr = Programme(id=programme)
+        self.programme = pr
+
+    def __repr__(self):
+        return "Id: {0} Type: {1} Remark: {2}".format(
+            self.id, self.ent_type, self.remark)
 
 
 class Birth(db.Model):

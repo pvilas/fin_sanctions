@@ -1,4 +1,14 @@
 {
+	"build_systems":
+	[
+		{
+			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+			"name": "Anaconda Python Builder",
+			"selector": "source.python",
+			"shell_cmd": "\"$VIRTUAL_ENV/bin/python2.7\" -u \"$file\""
+		}
+	],
+	"color_scheme": "Packages/User/Blackboard (SL) (Flake8Lint).tmTheme",
 	"folders":
 	[
 		{
@@ -6,4 +16,22 @@
 			"path": "fin_sanctions"
 		}
 	],
+	"font_size": 14,
+	"ignored_packages":
+	[
+		"Vintage"
+	],
+	"settings":
+	{
+		"python_interpreter": "$VIRTUAL_ENV/bin/python2.7",
+        "auto_formatting" : true,
+		"extra_paths":
+		[
+			"$VIRTUAL_ENV/lib/python2.7/site-packages",
+            ".",
+            "fin_sanctions"  
+		],
+
+	},
+	"translate_tabs_to_spaces": true
 }

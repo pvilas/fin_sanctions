@@ -14,12 +14,12 @@ app = Flask(__name__)
 db_path = str(os.path.join(app.root_path, 'list.db'))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////' + db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+db = SQLAlchemy(app) 
 # convert_unicode=True)
 
 import views
 import models  # import models, so tables are automatically created
-
+import admin
 """
 from database import db_session
 

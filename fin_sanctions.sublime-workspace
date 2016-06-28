@@ -83,7 +83,7 @@
 			"file": "fin_sanctions/models.py",
 			"settings":
 			{
-				"buffer_size": 1351,
+				"buffer_size": 3755,
 				"line_ending": "Unix"
 			}
 		},
@@ -91,7 +91,7 @@
 			"file": "fin_sanctions/__init__.py",
 			"settings":
 			{
-				"buffer_size": 594,
+				"buffer_size": 686,
 				"line_ending": "Unix"
 			}
 		}
@@ -403,15 +403,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1351,
+						"buffer_size": 3755,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								385,
-								385
+								0,
+								0
 							]
 						],
 						"settings":
@@ -421,7 +421,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 122.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -433,15 +433,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 594,
+						"buffer_size": 686,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								170,
-								170
+								686,
+								686
 							]
 						],
 						"settings":
