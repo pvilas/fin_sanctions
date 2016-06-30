@@ -41,48 +41,9 @@ except Exception, e:
     logger.error(e.message)
     exit(1)
 
-
-
-
-# prova = models.LegalBasis(id=u"hrrrla", reg_date=models.iso_date(
-#     '2003-07-08'), pdf_link='http://adfasdfas.com/')
-# db.session.add(prova)
-
-# prova2 = models.LegalBasis(id=u"hrrrla", reg_date=models.iso_date(
-#     '2003-07-08'), pdf_link='http://adfasdfas.com/')
-# db.session.add(prova2)
-
-
-
-
-
-
-# test if legal_basis exists
-lb = db.session.query(LegalBasis).filter(LegalBasis.id == '2016/218 (OJ L40)')
-if lb is None:
-    lb = LegalBasis('2016/218 (OJ L40)', iso_date(reg_date), pdf_link)
-self.legal_basis_id = lb
-
-# test if programme exists
-pr = db.session.query(Programme).filter(Programme.id == programme)
-if pr is None:
-    pr = Programme(id=programme)
-self.programme = pr
-
-
-o_entity = models.Entity(id='1',
-                         ent_type='P',
-                         legal_basis='2016/218 (OJ L40)',
-                         reg_date='2016-02-18',
-                         pdf_link="http://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32016R0218&amp;from=EN",
-                         programme="ZWE",
-                         remark="(Entity is sanctioned in regime 310/2002 (OJ L50) of programme ZWE, in regime 314/2004 (OJ L55) of programme ZWE)"
-                         )
-db.session.add(o_entity)
-logger.debug('commitant')
-db.session.commit()
-exit(0)
-
+num_names = 0
+num_pass = 0
+num_births = 0
 
 try:
 
@@ -90,13 +51,12 @@ try:
     root = ET.parse(EU_LIST_PATH).findall('.')[0]
 
     entities = root.findall('ENTITY')
-    logger.info('{0} entities on the list'.format(len(entities)))
 
     # foreach entity
     for e in entities:
-        print u'Id={0} Tipus={1} lb={2}'.format(e.attrib['Id'],
-                                                e.attrib['Type'],
-                                                e.attrib['legal_basis'])
+        # print u'Id={0} Tipus={1} lb={2}'.format(e.attrib['Id'],
+        #                                         e.attrib['Type'],
+        #                                         e.attrib['legal_basis'])
         o_entity = models.Entity(id=e.attrib['Id'],
                                  ent_type=e.attrib['Type'],
                                  legal_basis=e.attrib['legal_basis'],
@@ -107,36 +67,84 @@ try:
                                  )
         db.session.add(o_entity)
         db.session.commit()
-        logger.debug(e.attrib['Id']+' added')
+        logger.debug(e.attrib['Id'] + ' added')
 
         # names of the entity
         noms = list(e.iter('NAME'))
-        print "\tName list:"
+        num_names += len(noms)
+        # print "\tName list:"
         for n in noms:
-            print u'\t\t{0}, {1} ({2})'.format(n.find('LASTNAME').text,
-                                               n.find('FIRSTNAME').text,
-                                               n.find('WHOLENAME').text)
+            # print u'\t\t{0}, {1} ({2})'.format(n.find('LASTNAME').text,
+            #                                    n.find('FIRSTNAME').text,
+            #                                    n.find('WHOLENAME').text)
+            o_name = models.Name(id=n.attrib['Id'],
+                                 entity_id=n.attrib['Entity_id'],
+                                 legal_basis=n.attrib['legal_basis'],
+                                 reg_date=n.attrib['reg_date'],
+                                 pdf_link=n.attrib['pdf_link'],
+                                 programme=n.attrib['programme'],
+                                 last_name=n.find('LASTNAME').text,
+                                 first_name=n.find('FIRSTNAME').text,
+                                 whole_name=n.find('WHOLENAME').text,
+                                 title=n.find('TITLE').text,
+                                 gender=n.find('GENDER').text,
+                                 function=n.find('FUNCTION').text,
+                                 language=n.find('LANGUAGE').text
+                                 )
+            db.session.add(o_name)
+            db.session.commit()
+            logger.debug('\tName ' + n.attrib['Id'] + ' added')
 
-        # birth
+        # births
         births = list(e.iter('BIRTH'))
-        print "\tBirth list:"
+        num_births += len(births)
+        # print "\tBirth list:"
         for b in births:
-            print u'\t\t{0} {1} {2}'.format(b.find('DATE').text,
-                                            b.find('PLACE').text,
-                                            b.find('COUNTRY').text)
+            # print u'\t\t{0} {1} {2}'.format(b.find('DATE').text,
+            #                                 b.find('PLACE').text,
+            #                                 b.find('COUNTRY').text)
+            o_birth = models.Birth(id=b.attrib['Id'],
+                                   entity_id=b.attrib['Entity_id'],
+                                   legal_basis=b.attrib['legal_basis'],
+                                   reg_date=b.attrib['reg_date'],
+                                   pdf_link=b.attrib['pdf_link'],
+                                   programme=b.attrib['programme'],
+                                   date=b.find('DATE').text,
+                                   place=b.find('PLACE').text,
+                                   country=b.find('COUNTRY').text
+                                   )
+            db.session.add(o_birth)
+            db.session.commit()
+            logger.debug('\tBirth ' + b.attrib['Id'] + ' added')
 
         # passport
         passp = list(e.iter('PASSPORT'))
-        print "\tPassport list:"
+        num_pass += len(passp)
+        # print "\tPassport list:"
         for p in passp:
-            print u'\t\tNumber: {0} Issued: {1}'.format(
-                p.find('NUMBER').text,
-                p.find('COUNTRY').text)
+            # print u'\t\tNumber: {0} Issued: {1}'.format(
+            #     p.find('NUMBER').text,
+            #     p.find('COUNTRY').text)
+            o_pass = models.Passport(
+                id=p.attrib['Id'],
+                entity_id=p.attrib['Entity_id'],
+                legal_basis=p.attrib['legal_basis'],
+                reg_date=p.attrib['reg_date'],
+                pdf_link=p.attrib['pdf_link'],
+                programme=p.attrib['programme'],
+                number=p.find('NUMBER').text,
+                country=p.find('COUNTRY').text
+            )
+            db.session.add(o_pass)
+            db.session.commit()
+            logger.debug('\tPassport ' + p.attrib['Id'] + ' added')
 
     # commit changes
     db.session.commit()
 
+    logger.info('{0} entities, {1} names, {2} birth dates and {3} passports created'.format(
+        len(entities), num_names, num_births, num_pass))
+
+
 except Exception, e:
     logger.error(e.message)
-
-

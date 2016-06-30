@@ -3,6 +3,9 @@
 from fin_sanctions import app, db
 from sqlalchemy import create_engine, MetaData
 from datetime import datetime
+from jinja2 import Markup
+import urllib
+
 
 DEFAULT_CODE_TYPE_LEN = 32
 DEFAULT_DESCRIPTION_TYPE_LEN = 256
@@ -11,9 +14,88 @@ DEFAULT_URL_TYPE_LEN = 256
 
 
 def iso_date(iso_string):
-    """ from iso string YYYY-MM-DD to python datetime.date """
+    """ from iso string YYYY-MM-DD to python datetime.date
+        Note: if only year is supplied, we assume month=1 and day=1
+        This function is not longer used, dates from lists always are strings
+    """
+    if len(iso_string) == 4:
+        iso_string = iso_string + '-01-01'
     d = datetime.strptime(iso_string, '%Y-%m-%d')
     return d.date()
+
+
+def lb_create(legal_basis, reg_date, pdf_link):
+    """ tests if a legal basis exists and if not, create it
+        always returns the legal basis
+        note the reg_date is a python Date object from iso string
+    """
+    lb = db.session.query(LegalBasis).filter(
+        LegalBasis.id == legal_basis).first()
+    if lb is None:
+        lb = LegalBasis(id=legal_basis,
+                        reg_date=reg_date,
+                        pdf_link=pdf_link)
+        db.session.add(lb)
+        db.session.commit()
+        lb = db.session.query(LegalBasis).filter(
+            LegalBasis.id == legal_basis).first()
+    return lb
+
+
+def pr_create(programme, description=''):
+    """ test if programme exists. if not create it and return object """
+    pr = db.session.query(Programme).filter(
+        Programme.id == programme).first()
+    if pr is None:
+        pr = Programme(id=programme, description=description)
+        db.session.add(pr)
+        db.session.commit()
+        pr = db.session.query(Programme).filter(
+            Programme.id == programme).first()
+    return pr
+
+
+def lg_create(language):
+    """ creates and returns a language """
+    lg = db.session.query(Language).filter(Language.id == language).first()
+    if lg is None:
+        lg = Language(id=language)
+        db.session.add(lg)
+        db.session.commit()
+        lg = db.session.query(Language).filter(Language.id == language).first()
+    return lg
+
+
+def pl_create(place):
+    """ creates and returns a place """
+    pl = db.session.query(Place).filter(Place.id == place).first()
+    if pl is None:
+        pl = Place(id=place)
+        db.session.add(pl)
+        db.session.commit()
+        pl = db.session.query(Place).filter(Place.id == place).first()
+    return pl
+
+
+def format_maps(pl):
+    """ formats a place to a google maps link """
+    return Markup(
+        u'<a href="http://www.google.com/maps/place/{0}"'
+        ' target="_blank">{1}</a>'.format(
+            urllib.quote_plus(pl.encode("ascii","ignore")),
+            pl)
+    )
+
+
+def ct_create(country):
+    """ creates and returns a country """
+    ct = db.session.query(Country).filter(Country.id == country).first()
+    if ct is None:
+        ct = Country(id=country)
+        db.session.add(ct)
+        db.session.commit()
+        ct = db.session.query(Country).filter(Country.id == country).first()
+    return ct
 
 
 def FK(model, nullable=False):
@@ -21,7 +103,8 @@ def FK(model, nullable=False):
         @model db.Model
         @nullable default false
     """
-    return db.Column(db.ForeignKey(model.__tablename__ + '.id'),
+    return db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN),
+                     db.ForeignKey(model.__tablename__ + '.id'),
                      nullable=nullable)
 
 
@@ -36,103 +119,189 @@ class LegalBasis(db.Model):
         about a regulation. """
     __tablename__ = 'legalbasis'
     id = db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN), primary_key=True)
-    reg_date = db.Column(db.Date(), nullable=False)
-    pdf_link = db.Column(db.String(DEFAULT_URL_TYPE_LEN), nullable=False)
+    reg_date = ST(DEFAULT_DESCRIPTION_TYPE_LEN)
+    pdf_link = ST(DEFAULT_URL_TYPE_LEN)
+
+    # entities = db.relationship('Entity', back_populates="entities")
+
+    def __repr__(self):
+        return "{0}".format(self.id)
 
 
 class Country(db.Model):
     """ iso3 country code """
-    __tablename__ = 'country'
+    __tablename__ = 'countries'
     id = ST(3, nullable=False, primary_key=True)
-    description = ST(DEFAULT_DESCRIPTION_TYPE_LEN)
+    description = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+
+    def __repr__(self):
+        return "{0} {1}".format(self.id, self.description)
 
 
 class Language(db.Model):
     """iso language code """
-    __tablename__ = 'language'
+    __tablename__ = 'languages'
     id = ST(2, nullable=False, primary_key=True)
-    description = ST(DEFAULT_DESCRIPTION_TYPE_LEN)
+    description = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+
+    def __repr__(self):
+        return "{0} {1}".format(self.id, self.description)
 
 
 class Programme(db.Model):
     """ eu programme code (seems iso3) """
-    __tablename__ = 'programme'
+    __tablename__ = 'programmes'
     id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
     description = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+
+    def __repr__(self):
+        return "{0}".format(self.id)
 
 
 class Place(db.Model):
     """ convenience model to filter by place of birth.
         Place comes from Birth """
-    __tablename__ = 'place'
-    id = db.Column(db.Integer(), primary_key=True)  # autoincremental
-    # content of the place tag
-    description = ST(DEFAULT_DESCRIPTION_TYPE_LEN, False)
+    __tablename__ = 'places'
+    id = ST(DEFAULT_DESCRIPTION_TYPE_LEN, nullable=False, primary_key=True)
+
+    def __repr__(self):
+        return "{0}".format(self.id)
 
 
 class Entity(db.Model):
     """ Base class for an entity """
-    __tablename__ = 'entity'
+    __tablename__ = 'entities'
     id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
     ent_type = db.Column(db.Enum('P', 'E', name='entity_type'), nullable=False)
-    legal_basis_id = FK(LegalBasis)
-    programme = FK(Programme)
     remark = db.Column(db.Text())
+
+    legal_basis_id = FK(LegalBasis)
+    programme_id = FK(Programme)
+
+    legal_basis = db.relationship('LegalBasis', backref='Entity')
+    programme = db.relationship('Programme', backref='Programme')
+
+    names = db.relationship("Name")
+    births = db.relationship("Birth")
+    passports = db.relationship("Passport")
 
     def __init__(self, id, ent_type,
                  legal_basis, reg_date,
                  pdf_link, programme, remark):
+        """ creates entity from the list """
         self.id = id
         self.ent_type = ent_type
         self.remark = remark
 
-        # test if legal_basis exists
-        lb = db.session.query(LegalBasis).filter(LegalBasis.id == legal_basis)
-        if lb is None:
-            lb = LegalBasis(legal_basis, iso_date(reg_date), pdf_link)
-        self.legal_basis_id = lb
-
-        # test if programme exists
-        pr = db.session.query(Programme).filter(Programme.id == programme)
-        if pr is None:
-            pr = Programme(id=programme)
-        self.programme = pr
+        self.legal_basis_id = lb_create(legal_basis, reg_date, pdf_link).id
+        self.programme_id = pr_create(programme).id
 
     def __repr__(self):
-        return "Id: {0} Type: {1} Remark: {2}".format(
+        return u"ENTITY Id: {0} Type: {1} Remark: {2}".format(
             self.id, self.ent_type, self.remark)
-
-
-class Birth(db.Model):
-    """ birth date for an entity """
-    __tablename__ = 'birth'
-    id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
-    entity_id = FK(Entity)
-    date = db.Column(db.Date(), nullable=False)
-    legal_basis_id = FK(LegalBasis, False)
-    place_id = FK(Place, True)
-    country = FK(Country, True)
-
-
-class Passport(db.Model):
-    """ a passport of an entity"""
-    __tablename__ = 'passport'
-    id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
-    number = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)  # passport number
-    entity_id = FK(Entity)
-    legal_basis = FK(LegalBasis)
 
 
 class Name(db.Model):
     """ a name of an entity """
-    __tablename__ = 'name'
+    __tablename__ = 'names'
     id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
     entity_id = FK(Entity)
-    legal_basis = FK(LegalBasis)
+    legal_basis_id = FK(LegalBasis)
+    programme_id = FK(Programme)
+    language_id = FK(Language, True)
     last_name = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
     first_name = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
     whole_name = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
     title = ST(DEFAULT_CODE_TYPE_LEN, True)
     gender = db.Column(db.Enum('M', 'F'), nullable=True)
     function = db.Column(db.Text(), nullable=True)
-    language = FK(Language, True)
+
+    def __init__(self, id, entity_id,
+                 legal_basis, reg_date, pdf_link,
+                 programme,
+                 last_name, first_name, whole_name,
+                 title, gender, function, language):
+        """ creates name from the list """
+        self.id = id
+        self.entity_id = entity_id
+        self.legal_basis_id = lb_create(legal_basis, reg_date, pdf_link).id
+        self.programme_id = pr_create(programme).id
+        if language is not None:
+            self.language_id = lg_create(language).id
+        self.last_name = last_name
+        self.first_name = first_name
+        self.whole_name = whole_name
+        self.title = title
+        self.gender = gender
+        self.function = function
+
+    def __repr__(self):
+        return u"{0}".format(self.whole_name)
+
+
+class Birth(db.Model):
+    """ birth date for an entity """
+    __tablename__ = 'births'
+    id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
+    entity_id = FK(Entity)
+    date = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+    legal_basis_id = FK(LegalBasis, False)
+    programme_id = FK(Programme)
+    place_id = FK(Place, True)
+    country_id = FK(Country, True)
+
+    def __init__(self, id, entity_id,
+                 legal_basis, reg_date, pdf_link,
+                 programme,
+                 date, place, country):
+        """ creates a birth date from the list """
+        self.id = id
+        self.entity_id = entity_id
+        self.legal_basis_id = lb_create(legal_basis, reg_date, pdf_link).id
+        self.programme_id = pr_create(programme).id
+        self.date = date
+        if place is not None:
+            self.place_id = pl_create(place).id
+        if country is not None:
+            self.country_id = ct_create(country).id
+
+    def __repr__(self):
+        pl = self.place_id
+        #if self.place_id is not None:
+        #    pl = format_maps(u''+self.place_id)
+
+        if self.country_id is not None:
+            return Markup(u"{0} {1} {2}".format(self.date,
+                                         pl, self.country_id))
+        else:
+            return Markup(u"{0} {1}".format(self.date, pl))
+
+
+class Passport(db.Model):
+    """ a passport of an entity"""
+    __tablename__ = 'passports'
+    id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
+    number = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)  # passport number
+    entity_id = FK(Entity)
+    legal_basis_id = FK(LegalBasis)
+    programme_id = FK(Programme)
+    #country_id = FK(Country)
+
+    def __init__(self, id, entity_id,
+                 legal_basis, reg_date, pdf_link,
+                 programme,
+                 number, country):
+        """ creates a passport from the list """
+        self.id = id
+        self.entity_id = entity_id
+        self.legal_basis_id = lb_create(legal_basis, reg_date, pdf_link).id
+        self.programme_id = pr_create(programme).id
+        self.number = number
+        if country is not None:
+            self.country_id = ct_create(country).id
+
+    def __repr__(self):
+        if self.number is not None:
+            return u"{0} {1}".format(self.number, self.number)
+        else:
+            return ''

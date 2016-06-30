@@ -7,3 +7,5 @@ echo "Creating new backup"
 mv fin_sanctions/list.db fin_sanctions/list.db.old
 echo "Creating new db"
 python make_db.py
+echo "Populating new db with EU list"
+python parse_list_eu.py
