@@ -4,6 +4,7 @@ from fin_sanctions import app, db
 from sqlalchemy import create_engine, MetaData
 from datetime import datetime
 from jinja2 import Markup
+from flask import url_for
 import urllib
 
 
@@ -82,7 +83,7 @@ def format_maps(pl):
     return Markup(
         u'<a href="http://www.google.com/maps/place/{0}"'
         ' target="_blank">{1}</a>'.format(
-            urllib.quote_plus(pl.encode("ascii","ignore")),
+            urllib.quote_plus(pl.encode("ascii", "ignore")),
             pl)
     )
 
@@ -114,6 +115,17 @@ def ST(length=DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=False):
                      primary_key=primary_key)
 
 
+def entity_str_names(model):
+    """ returns str list of names of the model """
+    str_names = u''
+    for e in model.entities:
+        for n in e.names:
+            str_names.join([u'<a href="{0}">{1}</a><br/>'.format(
+                url_for('entity.edit_view', id=e.id),
+                n.whole_name)])
+    return str_names
+
+
 class LegalBasis(db.Model):
     """ The regulation summary is a type that contains the main information
         about a regulation. """
@@ -122,7 +134,7 @@ class LegalBasis(db.Model):
     reg_date = ST(DEFAULT_DESCRIPTION_TYPE_LEN)
     pdf_link = ST(DEFAULT_URL_TYPE_LEN)
 
-    # entities = db.relationship('Entity', back_populates="entities")
+    entities = db.relationship('Entity', back_populates="legal_basis")
 
     def __repr__(self):
         return "{0}".format(self.id)
@@ -154,6 +166,8 @@ class Programme(db.Model):
     id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
     description = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
 
+    entities = db.relationship('Entity', back_populates="programme")
+
     def __repr__(self):
         return "{0}".format(self.id)
 
@@ -178,12 +192,14 @@ class Entity(db.Model):
     legal_basis_id = FK(LegalBasis)
     programme_id = FK(Programme)
 
-    legal_basis = db.relationship('LegalBasis', backref='Entity')
-    programme = db.relationship('Programme', backref='Programme')
+    legal_basis = db.relationship('LegalBasis', back_populates='entities')
+
+    programme = db.relationship('Programme', back_populates='entities')
 
     names = db.relationship("Name")
     births = db.relationship("Birth")
     passports = db.relationship("Passport")
+    citizens = db.relationship("Citizen")
 
     def __init__(self, id, ent_type,
                  legal_basis, reg_date,
@@ -267,14 +283,41 @@ class Birth(db.Model):
 
     def __repr__(self):
         pl = self.place_id
-        #if self.place_id is not None:
+        # if self.place_id is not None:
         #    pl = format_maps(u''+self.place_id)
 
         if self.country_id is not None:
             return Markup(u"{0} {1} {2}".format(self.date,
-                                         pl, self.country_id))
+                                                pl, self.country_id))
         else:
             return Markup(u"{0} {1}".format(self.date, pl))
+
+
+class Citizen(db.Model):
+    """ citizenship of an entity """
+    __tablename__ = 'citizens'
+    id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
+    entity_id = FK(Entity)
+    legal_basis_id = FK(LegalBasis)
+    programme_id = FK(Programme)
+    country_id = FK(Country, True)
+
+    def __init__(self, id, entity_id,
+                 legal_basis, reg_date, pdf_link,
+                 programme,
+                 country):
+        """ creates a citizen from the list, there is no guarantee that
+            the citizen's country is already created  or use iso code
+            so we create a new model """
+        self.id = id
+        self.entity_id = entity_id
+        self.legal_basis_id = lb_create(legal_basis, reg_date, pdf_link).id
+        self.programme_id = pr_create(programme).id
+        if country is not None:
+            self.country_id = ct_create(country).id
+
+    def __repr__(self):
+        return u"{0}".format(self.country_id)
 
 
 class Passport(db.Model):
@@ -285,7 +328,7 @@ class Passport(db.Model):
     entity_id = FK(Entity)
     legal_basis_id = FK(LegalBasis)
     programme_id = FK(Programme)
-    #country_id = FK(Country)
+    country_id = FK(Country, True)
 
     def __init__(self, id, entity_id,
                  legal_basis, reg_date, pdf_link,
@@ -302,6 +345,6 @@ class Passport(db.Model):
 
     def __repr__(self):
         if self.number is not None:
-            return u"{0} {1}".format(self.number, self.number)
+            return u"{0}".format(self.number)
         else:
             return ''

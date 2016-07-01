@@ -2,10 +2,8 @@
 """ Parse xml EU data list and save on the DB """
 
 import os
-import sys
 import logging
 import xml.etree.ElementTree as ET
-from sqlalchemy import create_engine
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -30,7 +28,6 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
-engine = None
 try:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DB_PATH
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -44,6 +41,7 @@ except Exception, e:
 num_names = 0
 num_pass = 0
 num_births = 0
+num_city = 0
 
 try:
 
@@ -139,11 +137,29 @@ try:
             db.session.commit()
             logger.debug('\tPassport ' + p.attrib['Id'] + ' added')
 
+        # citizen
+        city = list(e.iter('CITIZEN'))
+        num_city += len(city)
+        # print "\tPassport list:"
+        for c in city:
+            o_city = models.Citizen(
+                id=c.attrib['Id'],
+                entity_id=c.attrib['Entity_id'],
+                legal_basis=c.attrib['legal_basis'],
+                reg_date=c.attrib['reg_date'],
+                pdf_link=c.attrib['pdf_link'],
+                programme=c.attrib['programme'],
+                country=c.find('COUNTRY').text
+            )
+            db.session.add(o_city)
+            db.session.commit()
+            logger.debug('\tCitizen ' + c.attrib['Id'] + ' added')
+
     # commit changes
     db.session.commit()
 
-    logger.info('{0} entities, {1} names, {2} birth dates and {3} passports created'.format(
-        len(entities), num_names, num_births, num_pass))
+    logger.info('{0} entities, {1} names, {2} birth dates, {3} citizenship and {4} passports created'.format(
+        len(entities), num_names, num_births, num_city, num_pass))
 
 
 except Exception, e:

@@ -1,0 +1,13 @@
+{% extends 'admin/model/list.html' %}
+
+{% block head_css %}
+    <style>
+        td.col-names {
+            width: 40%;
+        }
+        td.col-passports {
+            width: 20%;
+        }
+    </style>
+    {{ super() }}
+{% endblock %}
