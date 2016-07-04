@@ -335,11 +335,12 @@ class Passport(db.Model):
     legal_basis_id = FK(LegalBasis)
     programme_id = FK(Programme)
     country_id = FK(Country, True)
+    document_type = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
 
     def __init__(self, id, entity_id,
                  legal_basis, reg_date, pdf_link,
                  programme,
-                 number, country):
+                 number, country, document_type='Passport'):
         """ creates a passport from the list """
         self.id = id
         self.entity_id = entity_id
@@ -348,6 +349,7 @@ class Passport(db.Model):
         self.number = number
         if country is not None:
             self.country_id = ct_create(country).id
+        self.document_type = document_type
 
     def __repr__(self):
         if self.number is not None:

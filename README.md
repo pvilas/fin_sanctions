@@ -8,6 +8,7 @@ We use the Levenshtein distance in order to detect matches. We can pass the dist
 
 
 
+
 ## Lists
 - [EU](http://eeas.europa.eu/cfsp/sanctions/consol-list/index_en.htm)
 - [UN](https://www.un.org/sc/suborg/en/sanctions/un-sc-consolidated-list)
@@ -62,6 +63,15 @@ Run the flask server
 ```
 source run.sh
 ```
+
+## Use
+
+Navigate to your [localhost](http://localhost:5000/) server to query the database names with Levenshtein distance. You can also query the raw database from the [admin](http://localhost:5000/admin/entity) interface.
+
+## REST
+
+To be  continued...
+
 
 ## License
 
