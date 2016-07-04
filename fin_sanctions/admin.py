@@ -10,6 +10,63 @@ import urllib
 import models
 
 
+def join_commas(str_list, separator=u", ", final_mark='<br/>'):
+    """ joins string with commas and appends a final mark """
+    str_list = list(str_list)  # always a list
+
+    # remove Nones
+    try:
+        while str_list.count(None):
+            str_list.remove(None)
+    except Exception, e:
+        pass
+
+    tuple_lst = tuple(str_list)
+    return separator.join(map(unicode, tuple_lst)) + final_mark
+
+
+def format_country(ctry):
+    """ formats a country.
+        If is None returns None to chain with join_commas """
+    if ctry is not None:
+        return u" ({0})".format(ctry)
+    else:
+        return u''
+
+
+def format_place(place):
+    """ formats a place """
+    if place is not None:
+        return u'<a href="http://www.google.com/maps/place/{0}" target="_blank">{1}</a>'.format(
+            urllib.quote_plus(place.encode("ascii", "ignore")),
+            place)
+    else:
+        return u''
+
+
+def coalesce_void(s):
+    """ returns None if the string is void """
+    if s == '':
+        return None
+    else:
+        return s
+
+
+def second_none(f, s):
+    """ returns f+s if s is not None. None otherwise. """
+    if s is not None:
+        return u"{0} {1}".format(f, s)
+    else:
+        return None
+
+
+def format_loc(place, country):
+    """ return place (country) """
+    return coalesce_void(
+        format_place(place) +
+        format_country(country))
+
+
 def entities_formatter(view, context, model, name):
     """ Format entities belonging a legal basis or programme """
     return Markup(models.entity_str_names(model))
@@ -19,12 +76,9 @@ def names_formatter(view, context, model, name):
     """ Format name's of an entity """
     str_names = u''
     for n in model.names:  # for each name
-        str_names += u'{0}'.format(n.whole_name)
-        if n.language_id is not None:
-            str_names += ' ({0})'.format(n.language_id)
-        str_names += '<br/>'
-        # str_names += u'{0} ({1}, {2}, {3}, {4})<br/>'.format(
-        #     n.whole_name, n.gender, n.title, n.function, n.language_id)
+        str_names += join_commas(
+            [n.whole_name + format_country(n.language_id)],
+            separator=" ")
 
     return Markup(str_names)
 
@@ -33,16 +87,26 @@ def births_formatter(view, context, model, name):
     """ Format birth's date of an entity """
     str_names = u''
     for n in model.births:  # for each birth date
-        str_names += u'{0} '.format(n.date)
-        if n.place_id is not None:
-            str_names += u'<a href="http://www.google.com/maps/place/{0}"\
-                 target="_blank">{1}</a>'.format(
-                urllib.quote_plus(n.place_id.encode("ascii", "ignore")),
-                n.place_id)
+        str_names += join_commas([
+            n.date,
+            format_loc(n.place_id, n.country_id)
+        ])
 
-        if n.country_id is not None:
-            str_names += u', ({0})'.format(n.country_id)
+    if model.addresses:
+        if len(model.births) > 0:
+            str_names += '<hr/>'
+        str_names += 'Addresses:'
+
+    for a in model.addresses:  # for each address
         str_names += '<br/>'
+
+        str_names += join_commas([
+            a.number,
+            a.street,
+            a.zipcode,
+            format_loc(a.city, a.country_id),
+            a.other
+        ])
 
     return Markup(str_names)
 
@@ -50,30 +114,28 @@ def births_formatter(view, context, model, name):
 def passports_formatter(view, context, model, name):
     """ Format passports and other info of an entity """
     str_names = u''
+
     for n in model.passports:  # for each birth date
-        str_names += u'{0}'.format(n.number)
-        if n.country_id is not None:
-            str_names += u', ({0})'.format(n.country_id)
-        str_names += '<br/>'
+        str_names += join_commas([n.number + format_country(n.country_id)])
 
     # extra information from names
     if str_names != u'':  # prevent alone hr
         str_names += '<hr/>'
 
     for n in model.names:  # for each name
+
+        s = None
         if n.gender is not None:
             if n.gender == 'M':
-                str_names += 'Male, '
+                s = 'Male'
             else:
-                str_names += 'Female, '
+                s = 'Female '
 
-        if n.title is not None:
-            str_names += u' Title: {0}<br/>'.format(n.title)
-
-        if n.function is not None:
-            str_names += u'{0}<br/>'.format(n.function)
-
-        str_names += '<br/>'
+        str_names += join_commas([
+            second_none(u' Title:', n.title),
+            second_none(u' Function:', n.function),
+            second_none(u'Sex: ', s)
+        ])
 
     return Markup(str_names)
 
@@ -81,7 +143,7 @@ def passports_formatter(view, context, model, name):
 def remarks_formatter(view, context, model, name):
     """ renders remark and links to the legal basis """
     str_names = u''
-    if model.remark is not None:
+    if model.remark is not None and model.remark != '':
         str_names += u'{0}<hr/>'.format(model.remark)
 
     str_names += '<a href="{0}" target="_blank">{1}</a><br/>'.format(
@@ -135,7 +197,7 @@ class EntityModelView(GenericModelView):
                    'citizens', 'ent_type', 'remark')
     column_labels = dict(citizens='Citizen',
                          ent_type='Type',
-                         births='Birth',
+                         births='Birth and address',
                          passports='Id and other info.',
                          remark='Remarks and legal basis')
 
@@ -194,7 +256,7 @@ class PlaceModelView(GenericModelView):
 #
 # inicialització admin
 admin = Admin(app, name='EU/UN Sanction List', template_mode='bootstrap3')
-#admin.add_view(ModelView(models.User, db.session))
+# admin.add_view(ModelView(models.User, db.session))
 admin.add_view(EntityModelView(models.Entity, db.session))
 # admin.add_view(LegalBasisModelView(models.LegalBasis, db.session))
 # admin.add_view(ProgrammeModelView(models.Programme, db.session))

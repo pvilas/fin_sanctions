@@ -115,6 +115,11 @@ def ST(length=DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=False):
                      primary_key=primary_key)
 
 
+def TX(nullable=True):
+    """ a text column """
+    return db.Column(db.Text(), nullable=nullable)
+
+
 def entity_str_names(model):
     """ returns str list of names of the model """
     str_names = u''
@@ -187,7 +192,7 @@ class Entity(db.Model):
     __tablename__ = 'entities'
     id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
     ent_type = db.Column(db.Enum('P', 'E', name='entity_type'), nullable=False)
-    remark = db.Column(db.Text())
+    remark = TX()
 
     legal_basis_id = FK(LegalBasis)
     programme_id = FK(Programme)
@@ -200,6 +205,7 @@ class Entity(db.Model):
     births = db.relationship("Birth")
     passports = db.relationship("Passport")
     citizens = db.relationship("Citizen")
+    addresses = db.relationship("Address")
 
     def __init__(self, id, ent_type,
                  legal_basis, reg_date,
@@ -230,7 +236,7 @@ class Name(db.Model):
     whole_name = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
     title = ST(DEFAULT_CODE_TYPE_LEN, True)
     gender = db.Column(db.Enum('M', 'F'), nullable=True)
-    function = db.Column(db.Text(), nullable=True)
+    function = TX()
 
     def __init__(self, id, entity_id,
                  legal_basis, reg_date, pdf_link,
@@ -342,6 +348,45 @@ class Passport(db.Model):
         self.number = number
         if country is not None:
             self.country_id = ct_create(country).id
+
+    def __repr__(self):
+        if self.number is not None:
+            return u"{0}".format(self.number)
+        else:
+            return ''
+
+
+class Address(db.Model):
+    """ an address of an entity"""
+    __tablename__ = 'addresses'
+    id = ST(DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=True)
+    entity_id = FK(Entity)
+    legal_basis_id = FK(LegalBasis)
+    programme_id = FK(Programme)
+
+    number = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+    street = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+    zipcode = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+    city = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+    country_id = FK(Country, True)
+    other = TX()
+
+    def __init__(self, id, entity_id,
+                 legal_basis, reg_date, pdf_link,
+                 programme,
+                 number, street, zipcode, city, country, other):
+        """ creates a passport from the list """
+        self.id = id
+        self.entity_id = entity_id
+        self.legal_basis_id = lb_create(legal_basis, reg_date, pdf_link).id
+        self.programme_id = pr_create(programme).id
+        self.number = number
+        self.street = street
+        self.zipcode = zipcode
+        self.city = city
+        if country is not None:
+            self.country_id = ct_create(country).id
+        self.other = other
 
     def __repr__(self):
         if self.number is not None:

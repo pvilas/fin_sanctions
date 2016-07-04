@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-""" Parse xml EU data list and save on the DB """
+""" Parse xml EU data list and save on the DB. 
+    The EU list is the base for all others lists.
+    We should indicate the mapping between lists on to the 
+    head of each parser.
+"""
+
 
 import os
 import logging
@@ -10,12 +15,16 @@ from flask_sqlalchemy import SQLAlchemy
 
 from fin_sanctions import models
 
+
+__author__ = 'https://github.com/pvilas'
+
+# to be added to each index
+LIST_SUFFIX = 'EU'
+
 DB_PATH = str(os.path.join('',
                            'fin_sanctions/list.db'))
 EU_LIST_PATH = 'fin_sanctions/lists/global.xml'
 
-
-__author__ = 'https://github.com/pvilas'
 
 app = Flask(__name__)
 
@@ -42,11 +51,12 @@ num_names = 0
 num_pass = 0
 num_births = 0
 num_city = 0
+num_addresses = 0
 
 try:
 
     # parse EU list and bypass root element (WHOLE)
-    root = ET.parse(EU_LIST_PATH).findall('.')[0]
+    root = ET.parse(LIST_PATH).findall('.')[0]
 
     entities = root.findall('ENTITY')
 
@@ -55,7 +65,7 @@ try:
         # print u'Id={0} Tipus={1} lb={2}'.format(e.attrib['Id'],
         #                                         e.attrib['Type'],
         #                                         e.attrib['legal_basis'])
-        o_entity = models.Entity(id=e.attrib['Id'],
+        o_entity = models.Entity(id=LIST_SUFFIX + e.attrib['Id'],
                                  ent_type=e.attrib['Type'],
                                  legal_basis=e.attrib['legal_basis'],
                                  reg_date=e.attrib['reg_date'],
@@ -75,12 +85,12 @@ try:
             # print u'\t\t{0}, {1} ({2})'.format(n.find('LASTNAME').text,
             #                                    n.find('FIRSTNAME').text,
             #                                    n.find('WHOLENAME').text)
-            o_name = models.Name(id=n.attrib['Id'],
-                                 entity_id=n.attrib['Entity_id'],
+            o_name = models.Name(id=LIST_SUFFIX + n.attrib['Id'],
+                                 entity_id=LIST_SUFFIX + n.attrib['Entity_id'],
                                  legal_basis=n.attrib['legal_basis'],
                                  reg_date=n.attrib['reg_date'],
                                  pdf_link=n.attrib['pdf_link'],
-                                 programme=n.attrib['programme'],
+                                 programme=LIST_SUFFIX + n.attrib['programme'],
                                  last_name=n.find('LASTNAME').text,
                                  first_name=n.find('FIRSTNAME').text,
                                  whole_name=n.find('WHOLENAME').text,
@@ -101,12 +111,14 @@ try:
             # print u'\t\t{0} {1} {2}'.format(b.find('DATE').text,
             #                                 b.find('PLACE').text,
             #                                 b.find('COUNTRY').text)
-            o_birth = models.Birth(id=b.attrib['Id'],
-                                   entity_id=b.attrib['Entity_id'],
+            o_birth = models.Birth(id=LIST_SUFFIX + b.attrib['Id'],
+                                   entity_id=LIST_SUFFIX +
+                                   b.attrib['Entity_id'],
                                    legal_basis=b.attrib['legal_basis'],
                                    reg_date=b.attrib['reg_date'],
                                    pdf_link=b.attrib['pdf_link'],
-                                   programme=b.attrib['programme'],
+                                   programme=LIST_SUFFIX +
+                                   b.attrib['programme'],
                                    date=b.find('DATE').text,
                                    place=b.find('PLACE').text,
                                    country=b.find('COUNTRY').text
@@ -124,12 +136,12 @@ try:
             #     p.find('NUMBER').text,
             #     p.find('COUNTRY').text)
             o_pass = models.Passport(
-                id=p.attrib['Id'],
-                entity_id=p.attrib['Entity_id'],
+                id=LIST_SUFFIX + p.attrib['Id'],
+                entity_id=LIST_SUFFIX + p.attrib['Entity_id'],
                 legal_basis=p.attrib['legal_basis'],
                 reg_date=p.attrib['reg_date'],
                 pdf_link=p.attrib['pdf_link'],
-                programme=p.attrib['programme'],
+                programme=LIST_SUFFIX + p.attrib['programme'],
                 number=p.find('NUMBER').text,
                 country=p.find('COUNTRY').text
             )
@@ -143,24 +155,47 @@ try:
         # print "\tPassport list:"
         for c in city:
             o_city = models.Citizen(
-                id=c.attrib['Id'],
-                entity_id=c.attrib['Entity_id'],
+                id=LIST_SUFFIX + c.attrib['Id'],
+                entity_id=LIST_SUFFIX + c.attrib['Entity_id'],
                 legal_basis=c.attrib['legal_basis'],
                 reg_date=c.attrib['reg_date'],
                 pdf_link=c.attrib['pdf_link'],
-                programme=c.attrib['programme'],
+                programme=LIST_SUFFIX + c.attrib['programme'],
                 country=c.find('COUNTRY').text
             )
             db.session.add(o_city)
             db.session.commit()
             logger.debug('\tCitizen ' + c.attrib['Id'] + ' added')
 
+        # address
+        addresses = list(e.iter('ADDRESS'))
+        num_addresses += len(addresses)
+        # print "\tAddress list:"
+        for a in addresses:
+            o_address = models.Address(
+                id=LIST_SUFFIX + a.attrib['Id'],
+                entity_id=LIST_SUFFIX + a.attrib['Entity_id'],
+                legal_basis=a.attrib['legal_basis'],
+                reg_date=a.attrib['reg_date'],
+                pdf_link=a.attrib['pdf_link'],
+                programme=LIST_SUFFIX + a.attrib['programme'],
+                number=a.find('NUMBER').text,
+                street=a.find('STREET').text,
+                zipcode=a.find('ZIPCODE').text,
+                city=a.find('CITY').text,
+                country=a.find('COUNTRY').text,
+                other=a.find('OTHER').text
+            )
+            db.session.add(o_address)
+            db.session.commit()
+            logger.debug('\tAddress ' + a.attrib['Id'] + ' added')
+
     # commit changes
     db.session.commit()
 
-    logger.info('{0} entities, {1} names, {2} birth dates, {3} citizenship and {4} passports created'.format(
-        len(entities), num_names, num_births, num_city, num_pass))
+    logger.info('{0} entities, {1} names, {2} birth dates, {3} citizenship, {4} passports and {5} addresses created'.format(
+        len(entities), num_names, num_births, num_city, num_pass, num_addresses))
 
 
 except Exception, e:
-    logger.error(e.message)
+    app.logger.error(e.message)
