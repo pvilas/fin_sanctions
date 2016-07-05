@@ -28,8 +28,9 @@ def iso_date(iso_string):
 def lb_create(legal_basis, reg_date, pdf_link):
     """ tests if a legal basis exists and if not, create it
         always returns the legal basis
-        note the reg_date is a python Date object from iso string
     """
+    if pdf_link is None:
+        pdf_link = ''
     lb = db.session.query(LegalBasis).filter(
         LegalBasis.id == legal_basis).first()
     if lb is None:
@@ -99,25 +100,28 @@ def ct_create(country):
     return ct
 
 
+def TX(nullable=True, primary_key=False):
+    """ a text column """
+    if primary_key:
+        nullable = False
+    return db.Column(db.Text(), nullable=nullable, primary_key=primary_key)
+
+
 def FK(model, nullable=False):
     """ constructs a fk column to the id field of the model model
         @model db.Model
         @nullable default false
     """
-    return db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN),
+    return db.Column(db.Text(),  # String(DEFAULT_DESCRIPTION_TYPE_LEN),
                      db.ForeignKey(model.__tablename__ + '.id'),
                      nullable=nullable)
 
 
 def ST(length=DEFAULT_CODE_TYPE_LEN, nullable=False, primary_key=False):
     """ constructs a column of type string """
-    return db.Column(db.String(length), nullable=nullable,
-                     primary_key=primary_key)
-
-
-def TX(nullable=True):
-    """ a text column """
-    return db.Column(db.Text(), nullable=nullable)
+    # return db.Column(db.String(length), nullable=nullable,
+    # primary_key=primary_key)
+    return TX(nullable, primary_key)
 
 
 def entity_str_names(model):
@@ -135,7 +139,8 @@ class LegalBasis(db.Model):
     """ The regulation summary is a type that contains the main information
         about a regulation. """
     __tablename__ = 'legalbasis'
-    id = db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN), primary_key=True)
+    # db.Column(db.String(DEFAULT_DESCRIPTION_TYPE_LEN), primary_key=True)
+    id = ST(DEFAULT_DESCRIPTION_TYPE_LEN, nullable=False, primary_key=True)
     reg_date = ST(DEFAULT_DESCRIPTION_TYPE_LEN)
     pdf_link = ST(DEFAULT_URL_TYPE_LEN)
 
@@ -235,14 +240,15 @@ class Name(db.Model):
     first_name = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
     whole_name = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
     title = ST(DEFAULT_CODE_TYPE_LEN, True)
-    gender = db.Column(db.Enum('M', 'F'), nullable=True)
+    gender = ST(DEFAULT_CODE_TYPE_LEN, True)
     function = TX()
+    other = TX()
 
     def __init__(self, id, entity_id,
                  legal_basis, reg_date, pdf_link,
                  programme,
                  last_name, first_name, whole_name,
-                 title, gender, function, language):
+                 title, gender, function, language, other=None):
         """ creates name from the list """
         self.id = id
         self.entity_id = entity_id
@@ -256,6 +262,7 @@ class Name(db.Model):
         self.title = title
         self.gender = gender
         self.function = function
+        self.other = other
 
     def __repr__(self):
         return u"{0}".format(self.whole_name)
@@ -271,11 +278,12 @@ class Birth(db.Model):
     programme_id = FK(Programme)
     place_id = FK(Place, True)
     country_id = FK(Country, True)
+    other = TX()
 
     def __init__(self, id, entity_id,
                  legal_basis, reg_date, pdf_link,
                  programme,
-                 date, place, country):
+                 date, place, country, other=None):
         """ creates a birth date from the list """
         self.id = id
         self.entity_id = entity_id
@@ -286,6 +294,7 @@ class Birth(db.Model):
             self.place_id = pl_create(place).id
         if country is not None:
             self.country_id = ct_create(country).id
+        self.other = other
 
     def __repr__(self):
         pl = self.place_id
@@ -307,11 +316,12 @@ class Citizen(db.Model):
     legal_basis_id = FK(LegalBasis)
     programme_id = FK(Programme)
     country_id = FK(Country, True)
+    other = TX()
 
     def __init__(self, id, entity_id,
                  legal_basis, reg_date, pdf_link,
                  programme,
-                 country):
+                 country, other=None):
         """ creates a citizen from the list, there is no guarantee that
             the citizen's country is already created  or use iso code
             so we create a new model """
@@ -321,6 +331,7 @@ class Citizen(db.Model):
         self.programme_id = pr_create(programme).id
         if country is not None:
             self.country_id = ct_create(country).id
+        self.other = other
 
     def __repr__(self):
         return u"{0}".format(self.country_id)
@@ -336,11 +347,12 @@ class Passport(db.Model):
     programme_id = FK(Programme)
     country_id = FK(Country, True)
     document_type = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
+    other = TX()
 
     def __init__(self, id, entity_id,
                  legal_basis, reg_date, pdf_link,
                  programme,
-                 number, country, document_type='Passport'):
+                 number, country, other=None, document_type='Passport'):
         """ creates a passport from the list """
         self.id = id
         self.entity_id = entity_id
@@ -350,6 +362,7 @@ class Passport(db.Model):
         if country is not None:
             self.country_id = ct_create(country).id
         self.document_type = document_type
+        self.other = other
 
     def __repr__(self):
         if self.number is not None:
@@ -376,7 +389,7 @@ class Address(db.Model):
     def __init__(self, id, entity_id,
                  legal_basis, reg_date, pdf_link,
                  programme,
-                 number, street, zipcode, city, country, other):
+                 number, street, zipcode, city, country, other=None):
         """ creates a passport from the list """
         self.id = id
         self.entity_id = entity_id

@@ -23,7 +23,7 @@ LIST_SUFFIX = 'EU'
 
 DB_PATH = str(os.path.join('',
                            'fin_sanctions/list.db'))
-EU_LIST_PATH = 'fin_sanctions/lists/global.xml'
+LIST_PATH = 'fin_sanctions/lists/global.xml'
 
 
 app = Flask(__name__)
@@ -35,14 +35,14 @@ formatter = logging.Formatter(
     '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 try:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DB_PATH
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db = SQLAlchemy(app)
 
-    logger.debug('DB openned at ' + DB_PATH)
+    logger.info('DB openned at ' + DB_PATH)
 except Exception, e:
     logger.error(e.message)
     exit(1)
@@ -59,6 +59,7 @@ try:
     root = ET.parse(LIST_PATH).findall('.')[0]
 
     entities = root.findall('ENTITY')
+    logger.info('Processing {0} entities...'.format(len(entities)))
 
     # foreach entity
     for e in entities:
@@ -74,7 +75,7 @@ try:
                                  remark=e.attrib['remark']
                                  )
         db.session.add(o_entity)
-        db.session.commit()
+        # db.session.commit()
         logger.debug(e.attrib['Id'] + ' added')
 
         # names of the entity
@@ -100,7 +101,7 @@ try:
                                  language=n.find('LANGUAGE').text
                                  )
             db.session.add(o_name)
-            db.session.commit()
+            # db.session.commit()
             logger.debug('\tName ' + n.attrib['Id'] + ' added')
 
         # births
@@ -124,7 +125,7 @@ try:
                                    country=b.find('COUNTRY').text
                                    )
             db.session.add(o_birth)
-            db.session.commit()
+            # db.session.commit()
             logger.debug('\tBirth ' + b.attrib['Id'] + ' added')
 
         # passport
@@ -146,7 +147,7 @@ try:
                 country=p.find('COUNTRY').text
             )
             db.session.add(o_pass)
-            db.session.commit()
+            # db.session.commit()
             logger.debug('\tPassport ' + p.attrib['Id'] + ' added')
 
         # citizen
@@ -164,7 +165,7 @@ try:
                 country=c.find('COUNTRY').text
             )
             db.session.add(o_city)
-            db.session.commit()
+            # db.session.commit()
             logger.debug('\tCitizen ' + c.attrib['Id'] + ' added')
 
         # address
@@ -187,7 +188,7 @@ try:
                 other=a.find('OTHER').text
             )
             db.session.add(o_address)
-            db.session.commit()
+            # db.session.commit()
             logger.debug('\tAddress ' + a.attrib['Id'] + ' added')
 
     # commit changes

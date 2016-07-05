@@ -52,6 +52,14 @@ def coalesce_void(s):
         return s
 
 
+def first_none(f, s):
+    """ returns f+s if f is not None. None otherwise. """
+    if f is not None:
+        return u"{0} {1}".format(f, s)
+    else:
+        return None
+
+
 def second_none(f, s):
     """ returns f+s if s is not None. None otherwise. """
     if s is not None:
@@ -116,7 +124,9 @@ def passports_formatter(view, context, model, name):
     str_names = u''
 
     for n in model.passports:  # for each birth date
-        str_names += join_commas([n.number + format_country(n.country_id)])
+        str_names += join_commas([
+            first_none(n.document_type, ': '),
+            n.number + format_country(n.country_id)])
 
     # extra information from names
     if str_names != u'':  # prevent alone hr
@@ -124,18 +134,21 @@ def passports_formatter(view, context, model, name):
 
     for n in model.names:  # for each name
 
-        s = None
-        if n.gender is not None:
-            if n.gender == 'M':
-                s = 'Male'
-            else:
-                s = 'Female '
-
         str_names += join_commas([
             second_none(u' Title:', n.title),
             second_none(u' Function:', n.function),
-            second_none(u'Sex: ', s)
+            second_none(u'Sex: ', n.gender)
         ])
+
+    return Markup(str_names)
+
+
+def citizens_formatter(view, context, model, name):
+    """ renders id and citizens """
+    str_names = u'{0}<br/>{1}<br/>'.format(model.id, model.ent_type)
+
+    for n in model.citizens:
+        str_names += u'{0}<br/>'.format(n.country_id)
 
     return Markup(str_names)
 
@@ -183,7 +196,8 @@ class EntityModelView(GenericModelView):
         'names': names_formatter,
         'births': births_formatter,
         'passports': passports_formatter,
-        'remark': remarks_formatter
+        'remark': remarks_formatter,
+        'citizens': citizens_formatter
     }
 
     column_searchable_list = ['remark', 'names.whole_name',
@@ -194,8 +208,8 @@ class EntityModelView(GenericModelView):
     column_filters = ['names']
     column_sortable_list = ()
     column_list = ('names', 'births', 'passports',
-                   'citizens', 'ent_type', 'remark')
-    column_labels = dict(citizens='Citizen',
+                   'citizens', 'remark')
+    column_labels = dict(citizens='List Id, type, citizen',
                          ent_type='Type',
                          births='Birth and address',
                          passports='Id and other info.',

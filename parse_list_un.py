@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """ Parse xml UN data list and save on the DB.
-    
+
     The mapping for the UN->EU list is:
 
         - individual -> entity
         - entity -> entity
-        - 
+        -
 
 
 
@@ -29,7 +29,7 @@ LIST_SUFFIX = 'UN'
 
 DB_PATH = str(os.path.join('',
                            'fin_sanctions/list.db'))
-LIST_PATH = 'fin_sanctions/lists/un.xml'
+LIST_PATH = 'fin_sanctions/lists/consolidated.xml'
 
 
 app = Flask(__name__)
@@ -41,7 +41,7 @@ try:
 
     app.logger.debug('DB openned at ' + DB_PATH)
 except Exception, e:
-    app.logger.error(e.message)
+    app.logger.error(str(e))
     exit(1)
 
 num_names = 0
@@ -51,7 +51,43 @@ num_city = 0
 num_addresses = 0
 
 
+def nt(node, tag):
+    """ returns text of the tag or None if the
+        tag does not exist """
+    if node.find(tag) is not None and node.find(tag).text is not None:
+        return node.find(tag).text
+    else:
+        return None
+
+
+def coalesce(lst):
+    """ returns first item not None """
+    for d in lst:
+        if d is not None:
+            return d
+
+    return None
+
+
+def join_commas(str_list, separator=u", ", final_mark='<br/>'):
+    """ joins string with commas and appends a final mark """
+    str_list = list(str_list)  # always a list
+
+    # remove Nones
+    try:
+        while str_list.count(None):
+            str_list.remove(None)
+    except Exception, e:
+        pass
+
+    tuple_lst = tuple(str_list)
+    return separator.join(map(unicode, tuple_lst)) + final_mark
+
+
 counter = 0  # to generate unique ids
+
+app.logger.level = logging.INFO
+
 
 try:
 
@@ -62,139 +98,237 @@ try:
 
     # app.logger.debug(entities)
 
-    app.logger.debug("{0} entities to parse.".format(len(entities)))
+    app.logger.info("{0} entities to parse.".format(len(entities)))
 
     for e in entities:
 
         # entity
         o_entity = models.Entity(
-            id=LIST_SUFFIX + e.find('DATAID').text,
+            id=u'{0}{1}'.format(LIST_SUFFIX, nt(e, 'DATAID')),
             ent_type='P',  # always person
-            legal_basis=e.find('REFERENCE_NUMBER').text,
-            reg_date=e.find('LISTED_ON').text,
+            legal_basis=nt(e, 'REFERENCE_NUMBER'),
+            reg_date=nt(e, 'LISTED_ON'),
             pdf_link=None,
-            programme=LIST_SUFFIX + e.find('UN_LIST_TYPE').text,
-            remark=e.find('COMMENTS1').text + ' Updated: ' + \
-            e.find('LAST_DAY_UPDATED').text
+            programme=u'{0}{1}'.format(LIST_SUFFIX, nt(e, 'UN_LIST_TYPE')),
+            remark=u'{0} Updated: {1}'.format(
+                nt(e, 'COMMENTS1'),
+                nt(e, 'LAST_DAY_UPDATED'))
         )
-        db.session.add(o_entity)
-        db.session.commit()
-        app.logger.debug(e.find('DATAID').text + ' added')
+        try:
+            db.session.add(o_entity)
+            app.logger.debug('Entity {0} added'.format(nt(e, 'DATAID')))
+        except Exception, err:
+            app.logger.error('Entity ' + str(err))
+            exit(1)
 
         # make an str with all designations
         str_desig = u''
         desig = e.iter('DESIGNATION')
         for d in desig:
-            str_desig += d.find('VALUE') + '; '
+            str_desig += u'{0}'.format(nt(d, 'VALUE')) + '; '
 
         # basic name
-        o_name = models.Name(id=LIST_SUFFIX + str(++counter),
-                             entity_id=LIST_SUFFIX + e.find('DATAID').text,
-                             legal_basis=e.find('REFERENCE_NUMBER').text,
-                             reg_date=e.find('LISTED_ON').text,
+        app.logger.debug('creating base name')
+        counter += 1
+
+        g = nt(e, 'GENDER')
+        if (g is None):
+            g = 'Unknown'
+
+        str_name = join_commas([
+            nt(e, 'FIRST_NAME'),
+            nt(e, 'SECOND_NAME'),
+            nt(e, 'THIRD_NAME'),
+            nt(e, 'FOURTH_NAME')],
+            separator=" ",
+            final_mark="")
+
+        o_name = models.Name(id=u'{0}{1}'.format(LIST_SUFFIX, str(counter)),
+                             entity_id=u'{0}{1}'.format(
+                                 LIST_SUFFIX, nt(e, 'DATAID')),
+                             legal_basis=nt(e, 'REFERENCE_NUMBER'),
+                             reg_date=nt(e, 'LISTED_ON'),
                              pdf_link=None,
-                             programme=LIST_SUFFIX +
-                             e.find('UN_LIST_TYPE').text,
-                             last_name=e.find('SECOND_NAME').text,
-                             first_name=e.find('FIRST_TNAME').text,
-                             whole_name=e.find(
-                                 'SECOND_NAME').text + e.find(
-                                 'FIRST_TNAME').text,
+                             programme=u'{0}{1}'.format(
+                                 LIST_SUFFIX, nt(e, 'UN_LIST_TYPE')),
+
+                             last_name=nt(e, 'SECOND_NAME'),
+                             first_name=nt(e, 'FIRST_NAME'),
+                             whole_name=str_name,
                              title=None,
-                             gender=None,
+                             gender=g,
                              function=str_desig,
-                             language=None
+                             language=None,
+                             other=nt(e, 'NOTE')
                              )
-        db.session.add(o_name)
-        db.session.commit()
+        try:
+            db.session.add(o_name)
+            app.logger.debug(u'Name {0} added'.format(nt(e, 'SECOND_NAME')))
+        except Exception, err:
+            app.logger.error('Base name ' + str(err))
+            exit(1)
 
         # names (alias ) of the entity
         noms = list(e.findall('INDIVIDUAL_ALIAS'))
         num_names += len(noms)
         # print "\tName list:"
         for n in noms:
-            o_name = models.Name(id=LIST_SUFFIX + str(++counter),
-                                 entity_id=LIST_SUFFIX + e.find('DATAID').text,
-                                 legal_basis=e.find('REFERENCE_NUMBER').text,
-                                 reg_date=e.find('LISTED_ON').text,
-                                 pdf_link=None,
-                                 programme=None,
-                                 last_name=None,
-                                 first_name=None,
-                                 whole_name=n.find('ALIAS_NAME').text,
-                                 title=None,
-                                 gender=None,
-                                 function=None,
-                                 language=None
-                                 )
-            db.session.add(o_name)
-            db.session.commit()
+            if nt(n, 'ALIAS_NAME') is not None:
+                counter += 1
+                o_name = models.Name(
+                    id=u'{0}{1}'.format(LIST_SUFFIX, str(counter)),
+                    entity_id=u'{0}{1}'.format(
+                        LIST_SUFFIX, nt(e, 'DATAID')),
+                    legal_basis=nt(e, 'REFERENCE_NUMBER'),
+                    reg_date=nt(e, 'LISTED_ON'),
+                    pdf_link=None,
+                    programme=u'{0}{1}'.format(
+                        LIST_SUFFIX, nt(e, 'UN_LIST_TYPE')),
+
+                    last_name=None,
+                    first_name=None,
+                    whole_name=nt(n, 'ALIAS_NAME'),
+                    title=None,
+                    gender=None,
+                    function=None,
+                    language=None,
+                    other=nt(n, 'NOTE')
+                )
+                try:
+                    db.session.add(o_name)
+                    app.logger.debug(
+                        u'Alias {0} added'.format(nt(e, 'ALIAS_NAME')))
+                except Exception, err:
+                    app.logger.error('Alias ' + str(err))
+                    exit(1)
 
         # births
         births = list(e.findall('INDIVIDUAL_DATE_OF_BIRTH'))
         num_births += len(births)
-        # print "\tBirth list:"
         for b in births:
-            # print u'\t\t{0} {1} {2}'.format(b.find('DATE').text,
-            #                                 b.find('PLACE').text,
-            #                                 b.find('COUNTRY').text)
-            o_birth = models.Birth(
-                id=LIST_SUFFIX + str(++counter),
-                entity_id=LIST_SUFFIX + e.find('DATAID').text,
-                legal_basis=e.find('REFERENCE_NUMBER').text,
-                reg_date=e.find('LISTED_ON').text,
-                pdf_link=None,
-                programme=None,
-                date=b.find('DATE').text + b.find('YEAR').text,
-                place=None,
-                country=None
-            )
-            db.session.add(o_birth)
-            db.session.commit()
+            p_date = coalesce([nt(b, 'DATE'), nt(b, 'YEAR')])
+            if p_date is not None:
+                counter += 1
+                o_birth = models.Birth(
+                    id=u'{0}{1}'.format(LIST_SUFFIX, str(counter)),
+                    entity_id='{0}{1}'.format(
+                        LIST_SUFFIX, nt(e, 'DATAID')),
+                    legal_basis=nt(e, 'REFERENCE_NUMBER'),
+                    reg_date=nt(e, 'LISTED_ON'),
+                    pdf_link=None,
+                    programme=u'{0}{1}'.format(
+                        LIST_SUFFIX, nt(e, 'UN_LIST_TYPE')),
+
+                    date=u'{0}'.format(p_date),
+                    place=None,
+                    country=None,
+                    other=nt(b, 'NOTE')
+                )
+                try:
+                    db.session.add(o_birth)
+                    app.logger.debug(
+                        u'Date of birth {0} added'.format(nt(b, 'DATE')))
+                except Exception, err:
+                    app.logger.error('Date of birth ' + str(err))
+                    exit(1)
 
         births = list(e.findall('INDIVIDUAL_PLACE_OF_BIRTH'))
-        num_births += len(births)
-        # print "\tBirth list:"
+        num_city += len(births)
         for b in births:
-            # print u'\t\t{0} {1} {2}'.format(b.find('DATE').text,
-            #                                 b.find('PLACE').text,
-            #                                 b.find('COUNTRY').text)
-            o_birth = models.Birth(
-                id=LIST_SUFFIX + str(++counter),
-                entity_id=LIST_SUFFIX + e.find('DATAID').text,
-                legal_basis=e.find('REFERENCE_NUMBER').text,
-                reg_date=e.find('LISTED_ON').text,
-                pdf_link=None,
-                programme=None,
-                date=None,
-                place=b.find('CITY').text,
-                country=b.find('COUNTRY').text
-            )
-            db.session.add(o_birth)
-            db.session.commit()
+            if (nt(b, 'CITY') is not None) or (nt(b, 'COUNTRY') is not None):
+                counter += 1
+                app.logger.debug('creating object birth for place')
+                o_birth = models.Birth(
+                    id=u'{0}{1}'.format(LIST_SUFFIX, str(counter)),
+                    entity_id=u'{0}{1}'.format(
+                        LIST_SUFFIX, nt(e, 'DATAID')),
+                    legal_basis=nt(e, 'REFERENCE_NUMBER'),
+                    reg_date=nt(e, 'LISTED_ON'),
+                    pdf_link=None,
+                    programme=u'{0}{1}'.format(
+                        LIST_SUFFIX, nt(e, 'UN_LIST_TYPE')),
+
+                    date=None,
+                    place=nt(b, 'CITY'),
+                    country=nt(b, 'COUNTRY'),
+                    other=nt(b, 'NOTE')
+                )
+                app.logger.debug('object for place created')
+                try:
+                    db.session.add(o_birth)
+                    app.logger.debug(
+                        u'Place of birth {0} added'.format(nt(b, 'CITY')))
+                except Exception, err:
+                    app.logger.error(
+                        'Place of birth {0} '.format(
+                            err))
+                    exit(1)
 
         # passport
         passp = list(e.findall('INDIVIDUAL_DOCUMENT'))
         num_pass += len(passp)
-        # print "\tPassport list:"
         for p in passp:
-            # print u'\t\tNumber: {0} Issued: {1}'.format(
-            #     p.find('NUMBER').text,
-            #     p.find('COUNTRY').text)
-            o_pass = models.Passport(
-                id=LIST_SUFFIX + str(++counter),
-                entity_id=LIST_SUFFIX + e.find('DATAID').text,
-                legal_basis=e.find('REFERENCE_NUMBER').text,
-                reg_date=e.find('LISTED_ON').text,
+            if nt(p, 'NUMBER') is not None:
+                counter += 1
+                o_pass = models.Passport(
+                    id=u'{0}{1}'.format(LIST_SUFFIX, str(counter)),
+                    entity_id=u'{0}{1}'.format(
+                        LIST_SUFFIX, nt(e, 'DATAID')),
+                    legal_basis=nt(e, 'REFERENCE_NUMBER'),
+                    reg_date=nt(e, 'LISTED_ON'),
+                    pdf_link=None,
+                    programme=u'{0}{1}'.format(
+                        LIST_SUFFIX, nt(e, 'UN_LIST_TYPE')),
+
+                    number=nt(p, 'NUMBER'),
+                    country=nt(p, 'COUNTRY_OF_ISSUE'),
+                    document_type=nt(p, 'TYPE_OF_DOCUMENT'),
+                    other=nt(p, 'NOTE')
+                )
+                try:
+                    db.session.add(o_pass)
+                    app.logger.debug(
+                        u'Document {0} added'.format(nt(p, 'NUMBER')))
+                except Exception, err:
+                    app.logger.error('Passport ' + str(err))
+                    exit(1)
+
+        # address
+        paddrs = list(e.findall('INDIVIDUAL_ADDRESS'))
+        num_addresses += len(paddrs)
+        for p in paddrs:
+            counter += 1
+            o_address = models.Address(
+                id=u'{0}{1}'.format(LIST_SUFFIX, str(counter)),
+                entity_id=u'{0}{1}'.format(
+                    LIST_SUFFIX, nt(e, 'DATAID')),
+                legal_basis=nt(e, 'REFERENCE_NUMBER'),
+                reg_date=nt(e, 'LISTED_ON'),
                 pdf_link=None,
-                programme=None,
-                number=p.find('NUMBER').text,
-                country=p.find('COUNTRY_OF_ISSUE').text,
-                document_type=p.find('TYPE_OF_DOCUMENT').text
+                programme=u'{0}{1}'.format(
+                    LIST_SUFFIX, nt(e, 'UN_LIST_TYPE')),
+
+                number=nt(p, 'STATE_PROVINCE'),
+                street=nt(p, 'STREET'),
+                city=nt(p, 'CITY'),
+                zipcode=nt(p, 'ZIP_CODE'),
+                country=nt(p, 'COUNTRY'),
+                other=nt(p, 'NOTE')
             )
-            db.session.add(o_pass)
-            db.session.commit()
+            try:
+                db.session.add(o_address)
+                app.logger.debug(
+                    u'Address {0} added'.format(nt(p, 'NUMBER')))
+            except Exception, err:
+                app.logger.error('Address ' + str(err))
+                exit(1)
+
+    # commit changes
+    db.session.commit()
+
+    app.logger.info('{0} entities, {1} names, {2} birth dates, {3} citizenship, {4} passports and {5} addresses created'.format(
+        len(entities), num_names, num_births, num_city, num_pass, num_addresses))
 
 
-except Exception, e:
-    app.logger.error(e.message)
+except Exception, err:
+    app.logger.error(str(err))

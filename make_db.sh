@@ -5,7 +5,16 @@ echo "Deleting old backup"
 rm fin_sanctions/list.db.old
 echo "Creating new backup"
 mv fin_sanctions/list.db fin_sanctions/list.db.old
-echo "Creating new db"
+echo "Creating new (empty) db"
 python make_db.py
+echo "Downloading lists"
+cd fin_sanctions/lists
+echo "EU list"
+wget -N http://ec.europa.eu/external_relations/cfsp/sanctions/list/version4/global/global.xml
+echo "UN list"
+wget -N https://www.un.org/sc/suborg/sites/www.un.org.sc.suborg/files/consolidated.xml
+cd ../..
 echo "Populating new db with EU list"
 python parse_list_eu.py
+echo "Populating new db with UN list"
+python parse_list_un.py
