@@ -68,6 +68,36 @@ source run.sh
 
 Navigate to your [localhost](http://localhost:5000/) server to query the database names with Levenshtein distance. You can also query the raw database from the [admin](http://localhost:5000/admin/entity) interface.
 
+## Build and load spellfix sqlite3 extension
+
+SQLite comes with the [Levenshtein distance function](https://en.wikipedia.org/wiki/Levenshtein_distance) named as [spellfix](https://www.sqlite.org/spellfix1.html), but in the form of [loadable extension](https://www.sqlite.org/loadext.html). You must compile the library on your target system before to use it. 
+
+
+### Building the spellfix extension on your system
+
+Download sqlite's [source code](https://www.sqlite.org/download.html). Go to ext/misc and run
+
+```
+$ gcc -fPIC -shared spellfix.c -o spellfix1.so
+```
+
+You should have spellfix1.so in your current directory. Copy it to fin_sanctions/fin_sanctions directory, that is, the same directory than ```list.db```.
+
+
+### Loading the spellfix extension on sqlite3
+
+On the extension is loaded, the script creates the virtual table and then you can query form matches.
+
+```
+$sqlite3 list.db
+sqlite> .load ./spellfix1.so
+sqlite> create virtual table whole_name using spellfix1;
+sqlite> insert into whole_name(word) select whole_name from names;
+sqlite> select word, distance from whole_name where word match 'hussein';
+```
+
+The distance field indicates the number of inserts, deletes or substitutions to transform one word into other.
+
 ## REST
 
 To be  continued...

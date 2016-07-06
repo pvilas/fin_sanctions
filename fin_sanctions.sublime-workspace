@@ -4,6 +4,110 @@
 		"selected_items":
 		[
 			[
+				"le",
+				"levenshtein	function"
+			],
+			[
+				"str",
+				"street	param"
+			],
+			[
+				"en",
+				"ent_type"
+			],
+			[
+				"country",
+				"country_id"
+			],
+			[
+				"num_c",
+				"num_city	statement"
+			],
+			[
+				"m",
+				"message"
+			],
+			[
+				"e",
+				"error"
+			],
+			[
+				"pri",
+				"primary_key	param"
+			],
+			[
+				"de",
+				"debug	statement"
+			],
+			[
+				"find",
+				"findall"
+			],
+			[
+				"fin",
+				"findall"
+			],
+			[
+				"LIST",
+				"LIST_SUFFIX	statement"
+			],
+			[
+				"se",
+				"second_none	function"
+			],
+			[
+				"co",
+				"country"
+			],
+			[
+				"format",
+				"format_loc	function"
+			],
+			[
+				"place",
+				"place_id"
+			],
+			[
+				"final",
+				"final_mark	param"
+			],
+			[
+				"fina",
+				"final_mark	param"
+			],
+			[
+				"for",
+				"format_place	function"
+			],
+			[
+				"la",
+				"language_id"
+			],
+			[
+				"w",
+				"whole_name"
+			],
+			[
+				"join",
+				"join_commas	function"
+			],
+			[
+				"name",
+				"nameExists	statement"
+			],
+			[
+				"add",
+				"addresses_formatter	function"
+			],
+			[
+				"a",
+				"attrib"
+			],
+			[
+				"num_a",
+				"num_addresses	statement"
+			],
+			[
 				"E",
 				"Enum	class"
 			],
@@ -36,14 +140,6 @@
 				"remark_type"
 			],
 			[
-				"de",
-				"def_desc_type"
-			],
-			[
-				"add",
-				"additional"
-			],
-			[
 				"additiona",
 				"AdditionalInfo"
 			],
@@ -72,10 +168,42 @@
 			}
 		},
 		{
-			"file": "fin_sanctions/er.md",
+			"file": "fin_sanctions/lists/sc-un.xsd",
 			"settings":
 			{
-				"buffer_size": 1338,
+				"buffer_size": 10567,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "README.md",
+			"settings":
+			{
+				"buffer_size": 2955,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "make_db.sh",
+			"settings":
+			{
+				"buffer_size": 778,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "fin_sanctions/admin.py",
+			"settings":
+			{
+				"buffer_size": 7799,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "parse_list_eu.py",
+			"settings":
+			{
+				"buffer_size": 7811,
 				"line_ending": "Unix"
 			}
 		},
@@ -83,15 +211,23 @@
 			"file": "fin_sanctions/models.py",
 			"settings":
 			{
-				"buffer_size": 11568,
+				"buffer_size": 13491,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "fin_sanctions/__init__.py",
+			"file": "lev.py",
 			"settings":
 			{
-				"buffer_size": 687,
+				"buffer_size": 800,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "parse_list_un.py",
+			"settings":
+			{
+				"buffer_size": 11078,
 				"line_ending": "Unix"
 			}
 		}
@@ -145,13 +281,15 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions"
+		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions",
+		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions/lists"
 	],
 	"file_history":
 	[
+		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions/__init__.py",
+		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions/er.md",
 		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions.sublime-project",
 		"/Users/pvilas/codigo/fin_sanctions/README.md",
-		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions/__init__.py",
 		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions/models.py",
 		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions/lists/global.xml",
 		"/Users/pvilas/codigo/fin_sanctions/fin_sanctions/lists/fsdexport-1.0.xsd.txt",
@@ -275,12 +413,11 @@
 		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-07-23-Django-filtro-de-query-usando-un-string.html",
 		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-07-24-Mysql-borrado-rápido-filas-duplicadas.html",
 		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-08-27-Django-cambiar-de-lenguaje-desde-el-view.html",
-		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-08-30-Django-desde-un-template-llamar-a-un-procedimiento-del-primer-objeto-de-un-query.html",
-		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-09-28-ipython-Shell-python-científica.-Instalación..html"
+		"/Users/pvilas/codigo/pvilas.github.io/_posts/_site/2013-08-30-Django-desde-un-template-llamar-a-un-procedimiento-del-primer-objeto-de-un-query.html"
 	],
 	"find":
 	{
-		"height": 25.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -295,6 +432,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"GENDER",
+			".message",
+			"SHAHIDKHEL",
 			"delisting_date",
 			"pylint",
 			"logger.debug",
@@ -321,6 +461,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"",
 			"logger.debug",
 			"categories:",
 			"tags:",
@@ -336,7 +477,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 5,
 			"sheets":
 			[
 				{
@@ -352,8 +493,8 @@
 						"selection":
 						[
 							[
-								1443822,
-								1443822
+								324759,
+								324752
 							]
 						],
 						"settings":
@@ -363,27 +504,57 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 42910.0,
+						"translation.y": 129329.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "fin_sanctions/er.md",
-					"semi_transient": false,
+					"file": "fin_sanctions/lists/sc-un.xsd",
+					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 1338,
+						"buffer_size": 10567,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								750,
-								750
+								5966,
+								5966
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2039.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "README.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2955,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								530,
+								465
 							]
 						],
 						"settings":
@@ -394,16 +565,74 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "fin_sanctions/models.py",
+					"buffer": 3,
+					"file": "make_db.sh",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 11568,
+						"buffer_size": 778,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								368,
+								368
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "fin_sanctions/admin.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7799,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3412,
+								3412
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2056.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "parse_list_eu.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7811,
 						"regions":
 						{
 						},
@@ -411,7 +640,73 @@
 						[
 							[
 								0,
-								0
+								23
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 6,
+					"file": "fin_sanctions/models.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13491,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8416,
+								8416
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3468.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "lev.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 800,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								800,
+								800
 							]
 						],
 						"settings":
@@ -428,20 +723,20 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "fin_sanctions/__init__.py",
+					"buffer": 8,
+					"file": "parse_list_un.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 687,
+						"buffer_size": 11078,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								425,
-								425
+								1618,
+								1618
 							]
 						],
 						"settings":
@@ -449,10 +744,10 @@
 							"syntax": "Packages/Python/Python.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 922.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -475,11 +770,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.5,
 			1.0
 		],
 		"rows":
@@ -497,7 +799,7 @@
 	"project": "fin_sanctions.sublime-project",
 	"replace":
 	{
-		"height": 46.0
+		"height": 64.0
 	},
 	"save_all_on_build": false,
 	"select_file":
@@ -527,7 +829,7 @@
 		],
 		"width": 392.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},

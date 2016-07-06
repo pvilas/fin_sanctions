@@ -32,6 +32,16 @@ DB_PATH = str(os.path.join('',
 LIST_PATH = 'fin_sanctions/lists/consolidated.xml'
 
 
+# logger inicialization
+logger = logging.getLogger('parse_list_un')
+handler = logging.StreamHandler()
+formatter = logging.Formatter(
+    '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+
+
 app = Flask(__name__)
 
 try:
@@ -39,9 +49,9 @@ try:
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db = SQLAlchemy(app)
 
-    app.logger.debug('DB openned at ' + DB_PATH)
+    logger.debug('DB openned at ' + DB_PATH)
 except Exception, e:
-    app.logger.error(str(e))
+    logger.error(str(e))
     exit(1)
 
 num_names = 0
@@ -86,9 +96,6 @@ def join_commas(str_list, separator=u", ", final_mark='<br/>'):
 
 counter = 0  # to generate unique ids
 
-app.logger.level = logging.INFO
-
-
 try:
 
     # parse UN list and bypass root element (WHOLE)
@@ -96,9 +103,9 @@ try:
 
     entities = root.findall('INDIVIDUAL')
 
-    # app.logger.debug(entities)
+    # logger.debug(entities)
 
-    app.logger.info("{0} entities to parse.".format(len(entities)))
+    logger.info("{0} entities to parse.".format(len(entities)))
 
     for e in entities:
 
@@ -116,9 +123,9 @@ try:
         )
         try:
             db.session.add(o_entity)
-            app.logger.debug('Entity {0} added'.format(nt(e, 'DATAID')))
+            logger.debug('Entity {0} added'.format(nt(e, 'DATAID')))
         except Exception, err:
-            app.logger.error('Entity ' + str(err))
+            logger.error('Entity ' + str(err))
             exit(1)
 
         # make an str with all designations
@@ -128,7 +135,7 @@ try:
             str_desig += u'{0}'.format(nt(d, 'VALUE')) + '; '
 
         # basic name
-        app.logger.debug('creating base name')
+        logger.debug('creating base name')
         counter += 1
 
         g = nt(e, 'GENDER')
@@ -163,44 +170,49 @@ try:
                              )
         try:
             db.session.add(o_name)
-            app.logger.debug(u'Name {0} added'.format(nt(e, 'SECOND_NAME')))
+            logger.debug(u'Name {0} added'.format(nt(e, 'SECOND_NAME')))
         except Exception, err:
-            app.logger.error('Base name ' + str(err))
+            logger.error('Base name ' + str(err))
             exit(1)
 
         # names (alias ) of the entity
         noms = list(e.findall('INDIVIDUAL_ALIAS'))
-        num_names += len(noms)
         # print "\tName list:"
         for n in noms:
             if nt(n, 'ALIAS_NAME') is not None:
-                counter += 1
-                o_name = models.Name(
-                    id=u'{0}{1}'.format(LIST_SUFFIX, str(counter)),
-                    entity_id=u'{0}{1}'.format(
-                        LIST_SUFFIX, nt(e, 'DATAID')),
-                    legal_basis=nt(e, 'REFERENCE_NUMBER'),
-                    reg_date=nt(e, 'LISTED_ON'),
-                    pdf_link=None,
-                    programme=u'{0}{1}'.format(
-                        LIST_SUFFIX, nt(e, 'UN_LIST_TYPE')),
+                # alias can come separated by semicolon
+                alias_list = map(unicode,
+                                 nt(n, 'ALIAS_NAME').split(";"))
+                alias_list = map(unicode.strip, alias_list)
+                for al in alias_list:
+                    counter += 1
+                    num_names += 1
+                    o_name = models.Name(
+                        id=u'{0}{1}'.format(LIST_SUFFIX, str(counter)),
+                        entity_id=u'{0}{1}'.format(
+                            LIST_SUFFIX, nt(e, 'DATAID')),
+                        legal_basis=nt(e, 'REFERENCE_NUMBER'),
+                        reg_date=nt(e, 'LISTED_ON'),
+                        pdf_link=None,
+                        programme=u'{0}{1}'.format(
+                            LIST_SUFFIX, nt(e, 'UN_LIST_TYPE')),
 
-                    last_name=None,
-                    first_name=None,
-                    whole_name=nt(n, 'ALIAS_NAME'),
-                    title=None,
-                    gender=None,
-                    function=None,
-                    language=None,
-                    other=nt(n, 'NOTE')
-                )
-                try:
-                    db.session.add(o_name)
-                    app.logger.debug(
-                        u'Alias {0} added'.format(nt(e, 'ALIAS_NAME')))
-                except Exception, err:
-                    app.logger.error('Alias ' + str(err))
-                    exit(1)
+                        last_name=None,
+                        first_name=None,
+                        whole_name=al,
+                        title=None,
+                        gender=None,
+                        function=None,
+                        language=None,
+                        other=nt(n, 'NOTE')
+                    )
+                    try:
+                        db.session.add(o_name)
+                        logger.debug(
+                            u'Alias {0} added'.format(al))
+                    except Exception, err:
+                        logger.error('Alias ' + str(err))
+                        exit(1)
 
         # births
         births = list(e.findall('INDIVIDUAL_DATE_OF_BIRTH'))
@@ -226,10 +238,10 @@ try:
                 )
                 try:
                     db.session.add(o_birth)
-                    app.logger.debug(
+                    logger.debug(
                         u'Date of birth {0} added'.format(nt(b, 'DATE')))
                 except Exception, err:
-                    app.logger.error('Date of birth ' + str(err))
+                    logger.error('Date of birth ' + str(err))
                     exit(1)
 
         births = list(e.findall('INDIVIDUAL_PLACE_OF_BIRTH'))
@@ -237,7 +249,7 @@ try:
         for b in births:
             if (nt(b, 'CITY') is not None) or (nt(b, 'COUNTRY') is not None):
                 counter += 1
-                app.logger.debug('creating object birth for place')
+                logger.debug('creating object birth for place')
                 o_birth = models.Birth(
                     id=u'{0}{1}'.format(LIST_SUFFIX, str(counter)),
                     entity_id=u'{0}{1}'.format(
@@ -253,13 +265,13 @@ try:
                     country=nt(b, 'COUNTRY'),
                     other=nt(b, 'NOTE')
                 )
-                app.logger.debug('object for place created')
+                logger.debug('object for place created')
                 try:
                     db.session.add(o_birth)
-                    app.logger.debug(
+                    logger.debug(
                         u'Place of birth {0} added'.format(nt(b, 'CITY')))
                 except Exception, err:
-                    app.logger.error(
+                    logger.error(
                         'Place of birth {0} '.format(
                             err))
                     exit(1)
@@ -287,10 +299,10 @@ try:
                 )
                 try:
                     db.session.add(o_pass)
-                    app.logger.debug(
+                    logger.debug(
                         u'Document {0} added'.format(nt(p, 'NUMBER')))
                 except Exception, err:
-                    app.logger.error('Passport ' + str(err))
+                    logger.error('Passport ' + str(err))
                     exit(1)
 
         # address
@@ -317,18 +329,18 @@ try:
             )
             try:
                 db.session.add(o_address)
-                app.logger.debug(
+                logger.debug(
                     u'Address {0} added'.format(nt(p, 'NUMBER')))
             except Exception, err:
-                app.logger.error('Address ' + str(err))
+                logger.error('Address ' + str(err))
                 exit(1)
 
     # commit changes
     db.session.commit()
 
-    app.logger.info('{0} entities, {1} names, {2} birth dates, {3} citizenship, {4} passports and {5} addresses created'.format(
+    logger.info('{0} entities, {1} names, {2} birth dates, {3} citizenship, {4} passports and {5} addresses created'.format(
         len(entities), num_names, num_births, num_city, num_pass, num_addresses))
 
 
 except Exception, err:
-    app.logger.error(str(err))
+    logger.error(str(err))
