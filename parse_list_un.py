@@ -39,7 +39,7 @@ formatter = logging.Formatter(
     '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 app = Flask(__name__)
@@ -91,7 +91,10 @@ def join_commas(str_list, separator=u", ", final_mark='<br/>'):
         pass
 
     tuple_lst = tuple(str_list)
-    return separator.join(map(unicode, tuple_lst)) + final_mark
+    str_pre = separator.join(map(unicode, tuple_lst))
+    if str_pre != '':
+        str_pre += final_mark
+    return unicode(str_pre)
 
 
 counter = 0  # to generate unique ids
@@ -123,16 +126,24 @@ try:
         )
         try:
             db.session.add(o_entity)
-            logger.debug('Entity {0} added'.format(nt(e, 'DATAID')))
+            # logger.debug('Entity {0} added'.format(nt(e, 'DATAID')))
         except Exception, err:
             logger.error('Entity ' + str(err))
             exit(1)
 
         # make an str with all designations
-        str_desig = u''
-        desig = e.iter('DESIGNATION')
-        for d in desig:
-            str_desig += u'{0}'.format(nt(d, 'VALUE')) + '; '
+        lst_desig = []
+        desig = e.find('DESIGNATION')
+        if desig is not None:
+            desig = desig.findall('VALUE')
+            if desig is not None:
+                # logger.debug('Los valores de designacion son ' + str(desig))
+                for d in desig:
+                    lst_desig.append(unicode(d.text))
+                    #logger.debug('afeixint ' + unicode(d.text))
+                    # += u'{0}'.format(nt(d, 'VALUE')) + '; '
+
+        str_desig = join_commas(lst_desig, separator=", ", final_mark=" ")
 
         # basic name
         logger.debug('creating base name')
@@ -152,32 +163,31 @@ try:
 
         o_name = models.Name(id=u'{0}{1}'.format(LIST_SUFFIX, str(counter)),
                              entity_id=u'{0}{1}'.format(
-                                 LIST_SUFFIX, nt(e, 'DATAID')),
-                             legal_basis=nt(e, 'REFERENCE_NUMBER'),
-                             reg_date=nt(e, 'LISTED_ON'),
-                             pdf_link=None,
-                             programme=u'{0}{1}'.format(
-                                 LIST_SUFFIX, nt(e, 'UN_LIST_TYPE')),
+            LIST_SUFFIX, nt(e, 'DATAID')),
+            legal_basis=nt(e, 'REFERENCE_NUMBER'),
+            reg_date=nt(e, 'LISTED_ON'),
+            pdf_link=None,
+            programme=u'{0}{1}'.format(
+            LIST_SUFFIX, nt(e, 'UN_LIST_TYPE')),
 
-                             last_name=nt(e, 'SECOND_NAME'),
-                             first_name=nt(e, 'FIRST_NAME'),
-                             whole_name=str_name,
-                             title=None,
-                             gender=g,
-                             function=str_desig,
-                             language=None,
-                             other=nt(e, 'NOTE')
-                             )
+            last_name=nt(e, 'SECOND_NAME'),
+            first_name=nt(e, 'FIRST_NAME'),
+            whole_name=str_name,
+            title=None,
+            gender=g,
+            function=str_desig,
+            language=None,
+            other=nt(e, 'NOTE')
+        )
         try:
             db.session.add(o_name)
-            logger.debug(u'Name {0} added'.format(nt(e, 'SECOND_NAME')))
+            # logger.debug(u'Name {0} added'.format(nt(e, 'SECOND_NAME')))
         except Exception, err:
             logger.error('Base name ' + str(err))
             exit(1)
 
         # names (alias ) of the entity
         noms = list(e.findall('INDIVIDUAL_ALIAS'))
-        # print "\tName list:"
         for n in noms:
             if nt(n, 'ALIAS_NAME') is not None:
                 # alias can come separated by semicolon
@@ -208,8 +218,7 @@ try:
                     )
                     try:
                         db.session.add(o_name)
-                        logger.debug(
-                            u'Alias {0} added'.format(al))
+                        # logger.debug(u'Alias {0} added'.format(al))
                     except Exception, err:
                         logger.error('Alias ' + str(err))
                         exit(1)
@@ -238,8 +247,8 @@ try:
                 )
                 try:
                     db.session.add(o_birth)
-                    logger.debug(
-                        u'Date of birth {0} added'.format(nt(b, 'DATE')))
+                    # logger.debug(
+                    #     u'Date of birth {0} added'.format(nt(b, 'DATE')))
                 except Exception, err:
                     logger.error('Date of birth ' + str(err))
                     exit(1)
@@ -249,7 +258,6 @@ try:
         for b in births:
             if (nt(b, 'CITY') is not None) or (nt(b, 'COUNTRY') is not None):
                 counter += 1
-                logger.debug('creating object birth for place')
                 o_birth = models.Birth(
                     id=u'{0}{1}'.format(LIST_SUFFIX, str(counter)),
                     entity_id=u'{0}{1}'.format(
@@ -265,11 +273,10 @@ try:
                     country=nt(b, 'COUNTRY'),
                     other=nt(b, 'NOTE')
                 )
-                logger.debug('object for place created')
                 try:
                     db.session.add(o_birth)
-                    logger.debug(
-                        u'Place of birth {0} added'.format(nt(b, 'CITY')))
+                    # logger.debug(
+                    #     u'Place of birth {0} added'.format(nt(b, 'CITY')))
                 except Exception, err:
                     logger.error(
                         'Place of birth {0} '.format(
@@ -299,8 +306,8 @@ try:
                 )
                 try:
                     db.session.add(o_pass)
-                    logger.debug(
-                        u'Document {0} added'.format(nt(p, 'NUMBER')))
+                    # logger.debug(
+                    #     u'Document {0} added'.format(nt(p, 'NUMBER')))
                 except Exception, err:
                     logger.error('Passport ' + str(err))
                     exit(1)
@@ -329,8 +336,8 @@ try:
             )
             try:
                 db.session.add(o_address)
-                logger.debug(
-                    u'Address {0} added'.format(nt(p, 'NUMBER')))
+                # logger.debug(
+                #     u'Address {0} added'.format(nt(p, 'NUMBER')))
             except Exception, err:
                 logger.error('Address ' + str(err))
                 exit(1)

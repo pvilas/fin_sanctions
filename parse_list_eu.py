@@ -136,6 +136,17 @@ try:
             # print u'\t\tNumber: {0} Issued: {1}'.format(
             #     p.find('NUMBER').text,
             #     p.find('COUNTRY').text)
+
+            # split passport into number and comments
+            # comments starts with (
+            pp = p.find('NUMBER').text  # always is set
+            pp = pp.split('(')
+            pass_number = ''
+            pass_comments = None
+            if len(pp) > 0:
+                pass_number = unicode(pp[0].strip())
+            if len(pp) > 1:
+                pass_comments = unicode(pp[1].strip().strip('(').strip(')'))
             o_pass = models.Passport(
                 id=LIST_SUFFIX + p.attrib['Id'],
                 entity_id=LIST_SUFFIX + p.attrib['Entity_id'],
@@ -143,8 +154,9 @@ try:
                 reg_date=p.attrib['reg_date'],
                 pdf_link=p.attrib['pdf_link'],
                 programme=LIST_SUFFIX + p.attrib['programme'],
-                number=p.find('NUMBER').text,
-                country=p.find('COUNTRY').text
+                number=pass_number,  # p.find('NUMBER').text,
+                country=p.find('COUNTRY').text,
+                other=pass_comments
             )
             db.session.add(o_pass)
             # db.session.commit()

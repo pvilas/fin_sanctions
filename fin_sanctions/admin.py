@@ -124,9 +124,13 @@ def passports_formatter(view, context, model, name):
     str_names = u''
 
     for n in model.passports:  # for each birth date
-        str_names += join_commas([
-            first_none(n.document_type, ': '),
-            n.number + format_country(n.country_id)])
+        p = first_none(n.document_type, ': ') +\
+            n.number +\
+            format_country(n.country_id)
+        if n.other is not None:
+            p += u' ({0})'.format(n.other)
+
+        str_names += p + '<br/>'
 
     # extra information from names
     if str_names != u'':  # prevent alone hr
