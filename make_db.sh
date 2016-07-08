@@ -20,6 +20,6 @@ echo "Populating new db with UN list"
 python parse_list_un.py
 echo "Loading spellfix extension and creating indexes"
 cd fin_sanctions
-sqlite3 list.db < load_spellext.sql
+# sqlite3 list.db < load_spellext.sql
 cd ..
 echo "Terminated. Please look for errors."

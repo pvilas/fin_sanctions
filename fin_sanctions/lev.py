@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sys
-
 
 def levenshtein(a, b):
     """ Calculates the Levenshtein distance between a and b.
@@ -24,10 +22,3 @@ def levenshtein(a, b):
                 change = change + 1
             current[j] = min(add, delete, change)
     return current[n]
-
-
-if len(sys.argv) < 3:
-    print "dos argumentos"
-    exit(1)
-
-print levenshtein(sys.argv[1], sys.argv[2])
