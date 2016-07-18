@@ -1,5 +1,51 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-  <p>Hello world</p>
+
+    <h4>Search the lists using Levenshtein distance to the name or id</h4>
+  
+    <!-- search form -->
+    <p>
+    <br/>
+    <form action='/search' method="post"  class="form-horizontal">
+
+     <div class="form-group">
+        <label for="inputName" class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" id="id_name" name="inputName" placeholder="Name" width="80" maxlength="80">
+          <p class="help-block">First name and last names.</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="inputPassword" class="col-sm-2 control-label">Passport</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" id="id_password" name="inputPassword" placeholder="Password" width="30" maxlength="30">
+          <p class="help-block">Enter some id number.</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="inputDistance" class="col-sm-2 control-label">Similarity</label>
+        <div class="col-sm-2">
+          <input type="number" class="form-control" id="id_distance" name="inputDistance" placeholder="Distance" min="0" max="100" value="80">
+          <p class="help-block">Enter the % of similarity.</p>
+        </div>
+      </div>
+
+
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+      </div>
+
+    </form>
+    </p>
+
+
+
+
+
 {% endblock %}

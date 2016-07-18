@@ -5,6 +5,10 @@ echo "Deleting old backup"
 rm fin_sanctions/list.db.old
 echo "Creating new backup"
 mv fin_sanctions/list.db fin_sanctions/list.db.old
+echo "Loading spellfix extension and creating indexes"
+cd fin_sanctions
+sqlite3 list.db < load_spellext.sql
+cd ..
 echo "Creating new (empty) db"
 python make_db.py
 echo "Downloading lists"
@@ -18,8 +22,6 @@ echo "Populating new db with EU list"
 python parse_list_eu.py
 echo "Populating new db with UN list"
 python parse_list_un.py
-echo "Loading spellfix extension and creating indexes"
-cd fin_sanctions
-# sqlite3 list.db < load_spellext.sql
-cd ..
+echo "Vocabulary"
+python create_vocabulary.py
 echo "Terminated. Please look for errors."

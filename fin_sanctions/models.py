@@ -243,6 +243,8 @@ class Name(db.Model):
     gender = ST(DEFAULT_CODE_TYPE_LEN, True)
     function = TX()
     other = TX()
+    # this is the rowid from the vocabulary table
+    spell_ref = db.Column(db.Integer(), nullable=True)
 
     def __init__(self, id, entity_id,
                  legal_basis, reg_date, pdf_link,
@@ -348,6 +350,9 @@ class Passport(db.Model):
     country_id = FK(Country, True)
     document_type = ST(DEFAULT_DESCRIPTION_TYPE_LEN, True)
     other = TX()
+
+    # this is the rowid from the vocabulary table
+    spell_ref = db.Column(db.Integer(), nullable=True)
 
     def __init__(self, id, entity_id,
                  legal_basis, reg_date, pdf_link,

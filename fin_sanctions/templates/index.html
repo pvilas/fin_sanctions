@@ -70,29 +70,74 @@
       </nav>
       -->
       
-    <h1>Search EU/UN list</h1>  
+    <h1>Financial Sanctions Lists</h1>  
+    <h4>Search the lists using Levenshtein distance to the name or id</h4>
   
     <!-- search form -->
     <p>
-    <form action='/search' method="post">
-    Name: <input type="text" id="id_name" name="name" size="80" maxlength="120"/>
-    <input type="submit" value="Submit"/>
-    </form>  
+    <br/>
+    <form action='/search' method="post"  class="form-horizontal">
+
+     <div class="form-group">
+        <label for="inputName" class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" id="id_name" name="inputName" placeholder="Name" width="80" maxlength="80">
+          <p class="help-block">First name and last names.</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="inputPassword" class="col-sm-2 control-label">Passport</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" id="id_password" name="inputPassword" placeholder="Password" width="30" maxlength="30">
+          <p class="help-block">Enter some id number.</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="inputDistance" class="col-sm-2 control-label">Similarity</label>
+        <div class="col-sm-2">
+          <input type="number" class="form-control" id="id_distance" name="inputDistance" placeholder="Distance" min="0" max="100" value="80">
+          <p class="help-block">Enter the % of similarity.</p>
+        </div>
+      </div>
+
+
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+      </div>
+
+    </form>
     </p>
 
 
     <!-- resulting list -->
     <p>
     {%if execution_time %}
-        Searching: {{query_name}} ({{execution_time}})<br/>
+        Results for {{query_name}} with {{similarity}}% of similarity. ({{execution_time}})<br/>
     {% endif %}    
-    {% for s, idx, wn, pd in score %}
-        <li>{{s}}, {{idx}}, {{wn}} : {{pd}}</li>
+    </p>
+    <p>View <a href="">all results</a></p>
+
+    <p>
+    {% for idx, word, distance in score %}
+        <li>{{idx}} {{word}} ({{distance}}%)</li>
     {% endfor %}
     </p>
 
+    <p>
+    or go to <a href="/admin/entity">the administrator panel</a>. The administrator uses regular search, not the Levenshtein distance.
+    </p>
 
-
+    <p>
+    <small>
+    Please provide name or password. If both are provided only name will be used.
+    </small>
+    </p>
+    
 
 
     </div>

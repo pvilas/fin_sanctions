@@ -36,6 +36,15 @@ pip install Flask
 pip install Flask-admin
 pip install Flask-SQLAlchemy
 pip install Flask-security
+pip install Distance
+```
+
+The apsw provides direct access to sqlite. We will use it do get the fts and spellfix extensions. It is possible to use it with the traditional db-api python driver. The [official](http://rogerbinns.github.io/apsw/index.html) documentation is extensive. The only issue is with virtualenv, we have installed the library without the *--user* parameter. Moreover, note the enable-all-extensions option.More information is on the [download](http://rogerbinns.github.io/apsw/download.html#easy-install-pip-pypi) page.
+
+```
+pip install https://github.com/rogerbinns/apsw/releases/download/3.13.0-r1/apsw-3.13.0-r1.zip \
+--global-option=fetch --global-option=--version --global-option=3.13.0 --global-option=--all \
+--global-option=build --global-option=--enable-all-extensions
 ```
 
 > Optional: If you like to use Sublime Text editor, make link on the local directory
@@ -84,6 +93,12 @@ $ gcc -fPIC -shared spellfix.c -o spellfix1.so
 You should have spellfix1.so in your current directory. Copy it to fin_sanctions/fin_sanctions directory, that is, the same directory than ```list.db```.
 
 
+### sqlite
+
+https://github.com/ghaering/pysqlite
+http://stackoverflow.com/questions/1545479/force-python-to-forego-native-sqlite3-and-use-the-installed-latest-sqlite3-ver
+
+
 ### Loading the spellfix extension on sqlite3
 
 On the extension is loaded, the script creates the virtual table and then you can query form matches.
@@ -91,9 +106,9 @@ On the extension is loaded, the script creates the virtual table and then you ca
 ```
 $sqlite3 list.db
 sqlite> .load ./spellfix1.so
-sqlite> create virtual table whole_name using spellfix1;
-sqlite> insert into whole_name(word) select whole_name from names;
-sqlite> select word, distance from whole_name where word match 'hussein';
+sqlite> create virtual table spell_whole_name using spellfix1;
+sqlite> insert into spell_whole_name(word) select whole_name from names;
+sqlite> select word, distance from spell_whole_name where word match 'hussein';
 ```
 
 The distance field indicates the number of inserts, deletes or substitutions to transform one word into other.
@@ -101,6 +116,12 @@ The distance field indicates the number of inserts, deletes or substitutions to 
 ## REST
 
 To be  continued...
+
+## TODO
+
+- Format rules to save a passport number
+
+
 
 
 ## License

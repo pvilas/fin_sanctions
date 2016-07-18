@@ -183,7 +183,6 @@ class GenericModelView(ModelView):
 
 class EntityModelView(GenericModelView):
     """ customize entity model view """
-
     list_template = 'admin/entity/list.html'
 
     def _place_formatter(view, context, model, name):
@@ -204,12 +203,12 @@ class EntityModelView(GenericModelView):
         'citizens': citizens_formatter
     }
 
-    column_searchable_list = ['remark', 'names.whole_name',
+    column_searchable_list = ['id', 'remark', 'names.whole_name',
                               'births.date', 'births.country_id',
                               'births.place_id',
                               'passports.number'
                               ]
-    column_filters = ['names']
+    column_filters = ['id', 'names']
     column_sortable_list = ()
     column_list = ('names', 'births', 'passports',
                    'citizens', 'remark')
