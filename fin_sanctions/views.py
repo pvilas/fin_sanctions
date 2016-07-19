@@ -7,20 +7,22 @@ from lev import levenshtein as lev
 import timeit
 from fin_sanctions import apsw_con
 from distance import nlevenshtein
-
+import admin
+from models import normalize_passport
 
 @app.route('/')
 @app.route('/index.html')
 def index():
     """ render index page """
-    return render_template(
-        'index.html')
+    return redirect(
+        '/admin')
 
 
 
 @app.route('/search', methods=['POST'])
 def search():
     """ search the database for names or passwords """
+    admin.list_titulo='' # delete page title
     app.logger.debug('entering search')
     try:
         query_name = request.form['inputName'] or None
@@ -36,7 +38,7 @@ def search():
             query_name_len = len(query_name)
 
         if query_password is not None:
-            query_password = query_password.upper().strip()
+            query_password = normalize_passport(query_password)
             query_password_len = len(query_password)
 
         score = []
@@ -87,9 +89,13 @@ def search():
 
                     score.append( (rowid, word, (1-d)*100) )
 
-            et = 'Execution time: {0} s'.format(
+            et = u'Execution time: {0} s'.format(
                     timeit.default_timer() - start_time)
 
+            admin.ent_ctrl.list_titulo=u"Results for {0} with\
+             {1}% of similarity. ({2})".format(
+                param, (1-query_distance)*100, et
+             )
             return redirect(root_filter+query_filter_entity)
 
 
@@ -104,7 +110,7 @@ def search():
                 execution_time=et)
             """    
         else:
-            return render_template('index.html')
+            return redirect('/admin')
 
     except Exception, e:
         msg="Rendering error: {0}".format(e)

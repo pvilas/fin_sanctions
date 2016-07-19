@@ -2,13 +2,16 @@
 """ site administration """
 
 from fin_sanctions import app, db
-from flask_admin import Admin
+from flask_admin import Admin, expose
 from flask_admin.contrib.sqla import ModelView
 from jinja2 import Markup
 import urllib
 
+
+
 import models
 
+list_titulo=''
 
 def join_commas(str_list, separator=u", ", final_mark='<br/>'):
     """ joins string with commas and appends a final mark """
@@ -185,6 +188,18 @@ class EntityModelView(GenericModelView):
     """ customize entity model view """
     list_template = 'admin/entity/list.html'
 
+    list_titulo = None
+    @expose('/', methods=('GET', 'POST'))
+    def index_view(self):
+        # titol nomes amb un us
+        if self.list_titulo is not None:
+            self._template_args['list_titulo'] = self.list_titulo
+            self.list_titulo=None
+
+        app.logger.debug('helooo')
+        return super(EntityModelView, self).index_view()
+
+
     def _place_formatter(view, context, model, name):
         """ Format the url of the pdf to a link """
         if model.id is not None:
@@ -274,9 +289,16 @@ class PlaceModelView(GenericModelView):
 # inicialització admin
 admin = Admin(app, name='EU/UN Sanction List', template_mode='bootstrap3')
 # admin.add_view(ModelView(models.User, db.session))
-admin.add_view(EntityModelView(models.Entity, db.session))
-# admin.add_view(LegalBasisModelView(models.LegalBasis, db.session))
+ent_ctrl=EntityModelView(models.Entity, db.session)
+admin.add_view(ent_ctrl)
+admin.add_view(LegalBasisModelView(models.LegalBasis, db.session))
 # admin.add_view(ProgrammeModelView(models.Programme, db.session))
 # admin.add_view(PlaceModelView(models.Place, db.session))
 # admin.add_view(GenericModelView(models.Country, db.session))
 # admin.add_view(GenericModelView(models.Language, db.session))
+
+"""
+@app.context_processor
+def admin_context_processor():
+    return dict(list_titulo=list_titulo)
+"""

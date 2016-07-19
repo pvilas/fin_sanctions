@@ -12,5 +12,13 @@
             width: 20px;
         }
     </style>
+
     {{ super() }}
+{% endblock %}
+
+{% block list_header %}
+{% if list_titulo %}
+<h4>{{list_titulo}}</h4>
+{% endif %}
+{{ super() }}
 {% endblock %}

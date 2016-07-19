@@ -2,7 +2,7 @@
 
 {% block body %}
 
-    <h4>Search the lists using Levenshtein distance to the name or id</h4>
+    <h4>Search the lists using Levenshtein distance on the name or id</h4>
   
     <!-- search form -->
     <p>
@@ -28,7 +28,7 @@
       <div class="form-group">
         <label for="inputDistance" class="col-sm-2 control-label">Similarity</label>
         <div class="col-sm-2">
-          <input type="number" class="form-control" id="id_distance" name="inputDistance" placeholder="Distance" min="0" max="100" value="80">
+          <input type="number" class="form-control" id="id_distance" name="inputDistance" placeholder="Distance" step="10" min="0" max="100" value="80">
           <p class="help-block">Enter the % of similarity.</p>
         </div>
       </div>

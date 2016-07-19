@@ -6,12 +6,29 @@ from datetime import datetime
 from jinja2 import Markup
 from flask import url_for
 import urllib
-
+import unicodedata
 
 DEFAULT_CODE_TYPE_LEN = 32
 DEFAULT_DESCRIPTION_TYPE_LEN = 256
 LARGE_DESCRIPTION_TYPE_LEN = 2048
 DEFAULT_URL_TYPE_LEN = 256
+
+
+
+def toS(cadena):
+    return unicodedata.normalize('NFKD', unicode(cadena)).encode('ascii', 'ignore')
+
+def normalize_passport(num):
+    """ normalizes passport id """
+    num=num.\
+        upper().\
+        strip().\
+        replace("-", "").\
+        replace(" ", "").\
+        replace("\\", "").\
+        replace("_", "").\
+        replace("/", "")
+    return toS(num)
 
 
 def iso_date(iso_string):
@@ -363,7 +380,7 @@ class Passport(db.Model):
         self.entity_id = entity_id
         self.legal_basis_id = lb_create(legal_basis, reg_date, pdf_link).id
         self.programme_id = pr_create(programme).id
-        self.number = number
+        self.number = normalize_passport(number)
         if country is not None:
             self.country_id = ct_create(country).id
         self.document_type = document_type
