@@ -146,9 +146,9 @@ def entity_str_names(model):
     str_names = u''
     for e in model.entities:
         for n in e.names:
-            str_names.join([u'<a href="{0}">{1}</a><br/>'.format(
-                url_for('entity.edit_view', id=e.id),
-                n.whole_name)])
+            str_names+=u'<a href="{0}">{1}</a><br/>'.format(
+                url_for('entity.details_view', id=e.id),
+                n.whole_name)
     return str_names
 
 

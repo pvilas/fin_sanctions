@@ -186,6 +186,9 @@ class GenericModelView(ModelView):
 
 class EntityModelView(GenericModelView):
     """ customize entity model view """
+    column_display_actions = True
+    can_edit = False
+
     list_template = 'admin/entity/list.html'
 
     list_titulo = None
@@ -292,7 +295,7 @@ admin = Admin(app, name='EU/UN Sanction List', template_mode='bootstrap3')
 ent_ctrl=EntityModelView(models.Entity, db.session)
 admin.add_view(ent_ctrl)
 admin.add_view(LegalBasisModelView(models.LegalBasis, db.session))
-# admin.add_view(ProgrammeModelView(models.Programme, db.session))
+admin.add_view(ProgrammeModelView(models.Programme, db.session))
 # admin.add_view(PlaceModelView(models.Place, db.session))
 # admin.add_view(GenericModelView(models.Country, db.session))
 # admin.add_view(GenericModelView(models.Language, db.session))
