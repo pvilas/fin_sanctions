@@ -1,21 +1,28 @@
 # fin_sanctions
 
-Interface for query the lists of UN, EU and US persons, groups and entities subject to financial sanctions.
+Web interface for query the lists of UN, EU and US persons, groups and entities subject to financial sanctions.
 
 The project aims to compliment the EU regulations in the sense of detect similitudes between a given name and the lists.
 
-We use the Levenshtein distance in order to detect matches. We can pass the distance on the *distance* parameter of the query.
+We use the Levenshtein distance in order to detect matches. 
 
+The project includes a Flask web server and a script that updates the local database with the sanction lists.
 
+It includes also *connectors* that translates the different lists (EU, UN, US) to a common database format. More lists can be added to the database only programming a suitable new connector.
 
+You would have some web, python and linux/mac experience to install fin_sanctions. 
 
 ## Lists
+
 - [EU](http://eeas.europa.eu/cfsp/sanctions/consol-list/index_en.htm)
 - [UN](https://www.un.org/sc/suborg/en/sanctions/un-sc-consolidated-list)
 - [US](https://www.treasury.gov/ofac/downloads/consolidated/consolidated.xml)
 
 
 ## Installation
+
+The only issue with the installation is the need of the spellfix sqlite extension. We must compile it on the local system.
+
 
 Clone fin_sanctions
 ```
@@ -39,7 +46,7 @@ pip install Flask-security
 pip install Distance
 ```
 
-The apsw provides direct access to sqlite. We will use it do get the fts and spellfix extensions. It is possible to use it with the traditional db-api python driver. The [official](http://rogerbinns.github.io/apsw/index.html) documentation is extensive. The only issue is with virtualenv, we have installed the library without the *--user* parameter. Moreover, note the enable-all-extensions option.More information is on the [download](http://rogerbinns.github.io/apsw/download.html#easy-install-pip-pypi) page.
+The apsw provides direct access to sqlite. We will use it do get the fts and spellfix extensions. It is possible to use it with the traditional db-api python driver. The [official](http://rogerbinns.github.io/apsw/index.html) documentation is extensive. The only issue is with virtualenv, we have installed the library without the *--user* parameter. Moreover, note the enable-all-extensions option.More information is on the [download](http://rogerbinns.github.io/apsw/download.html#easy-install-pip-pypi) page. Make sure you have the virtual environment activated before the installation.
 
 ```
 pip install https://github.com/rogerbinns/apsw/releases/download/3.13.0-r1/apsw-3.13.0-r1.zip \
@@ -53,38 +60,10 @@ ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/loca
 sublime .
 ```
 
-Now you can create the database, sqlite by default. Follow the script instructions.
-Each time you run make_db the script tries to make a backup before to recreate the db,
-so the first time will report an error, just ignore.
-```
-source make_db.sh
-```
-
-If none error happens, you would take a look at the database structure
-```
-sqlite3 fin_sanctions/list.db
-.tables
-.quit
-```
+### Building the spellfix sqlite extension on your system
 
 
-Run the flask server
-```
-source run.sh
-```
-
-## Use
-
-Navigate to your [localhost](http://localhost:5000/) server to query the database names with Levenshtein distance. You can also query the raw database from the [admin](http://localhost:5000/admin/entity) interface.
-
-## Build and load spellfix sqlite3 extension
-
-SQLite comes with the [Levenshtein distance function](https://en.wikipedia.org/wiki/Levenshtein_distance) named as [spellfix](https://www.sqlite.org/spellfix1.html), but in the form of [loadable extension](https://www.sqlite.org/loadext.html). You must compile the library on your target system before to use it. 
-
-
-### Building the spellfix extension on your system
-
-Download sqlite's [source code](https://www.sqlite.org/download.html). Go to ext/misc and run
+On other directory, download sqlite's [source code](https://www.sqlite.org/download.html). Go to ext/misc and run
 
 ```
 $ gcc -fPIC -shared spellfix.c -o spellfix1.so
@@ -93,35 +72,71 @@ $ gcc -fPIC -shared spellfix.c -o spellfix1.so
 You should have spellfix1.so in your current directory. Copy it to fin_sanctions/fin_sanctions directory, that is, the same directory than ```list.db```.
 
 
-### sqlite
+### Make the database
 
-https://github.com/ghaering/pysqlite
-http://stackoverflow.com/questions/1545479/force-python-to-forego-native-sqlite3-and-use-the-installed-latest-sqlite3-ver
-
-
-### Loading the spellfix extension on sqlite3
-
-On the extension is loaded, the script creates the virtual table and then you can query form matches.
+Now you can create download the lists and create the database. Return to the fin_sanctions directory and execute the creation script. You may read the script before to understand what is happen.
 
 ```
-$sqlite3 list.db
-sqlite> .load ./spellfix1.so
-sqlite> create virtual table spell_whole_name using spellfix1;
-sqlite> insert into spell_whole_name(word) select whole_name from names;
+source make_db.sh
+```
+
+If none error happens, you would take a look at the database structure
+```
+sqlite3 fin_sanctions/list.db
+.tables
+sqlite> .load .fin_sanctions//spellfix1.so
 sqlite> select word, distance from spell_whole_name where word match 'hussein';
+.quit
 ```
 
 The distance field indicates the number of inserts, deletes or substitutions to transform one word into other.
 
+### Run the flask server
+
+```
+source run.sh
+```
+
+Navigate to [localhost](http://localhost:5000/) to query the database names with Levenshtein distance. 
+
+You can query the raw database from the [admin](http://localhost:5000/admin/entity) interface.
+
+
+
+## Update the lists
+
+You must run the *make_db.sh* script one time a month to update the lists.
+
+
+## Regulations
+
+The Casinos Association of Spain, following EU regulations, recommends to use the any distancee method to detect similarities in the lists with passports and whole names.
+
+SQLite comes with the [Levenshtein distance function](https://en.wikipedia.org/wiki/Levenshtein_distance) named as [spellfix](https://www.sqlite.org/spellfix1.html) in the form of [loadable extension](https://www.sqlite.org/loadext.html). 
+
+On the database, the passport number is *normalized* before to store it. Each time we query for a passport the server normalizes it before perform the search. The exact normalization code is:
+
+```python
+
+def toS(cadena):
+    return unicodedata.normalize('NFKD', unicode(cadena)).encode('ascii', 'ignore')
+
+def normalize_passport(num):
+    """ normalizes passport id """
+    num=num.\
+        upper().\
+        strip().\
+        replace("-", "").\
+        replace(" ", "").\
+        replace("\\", "").\
+        replace("_", "").\
+        replace("/", "")
+    return toS(num)
+```
+
 ## REST
 
 To be  continued...
-
-## TODO
-
-- Format rules to save a passport number
-
-
 
 
 ## License
