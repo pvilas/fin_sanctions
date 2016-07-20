@@ -63,9 +63,18 @@ sublime .
 ### Building the spellfix sqlite extension on your system
 
 
-On other directory, download sqlite's [source code](https://www.sqlite.org/download.html). Go to ext/misc and run
+On other directory, download sqlite's [source code](https://www.sqlite.org/download.html). 
+
+At this moment the latests version is 3.13.0, so download and unzip it, download the spellfix1 extension and compile it
 
 ```
+$ cd..
+$ mkdir sqlite_src
+$ cd sqlite_src
+$ wget https://www.sqlite.org/2016/sqlite-amalgamation-3130000.zip
+$ unzip sqlite-amalgamation-3130000.zip
+$ cd sqlite-amalgamation-3130000
+$ wget $ wget http://sqlite.org/cgi/src/raw/ext/misc/spellfix.c?name=b9065af7ab1f2597b505a8aa9892620866d502fc -O spellfix1.c
 $ gcc -fPIC -shared spellfix.c -o spellfix1.so
 ```
 
@@ -110,7 +119,7 @@ You must run the *make_db.sh* script one time a month to update the lists.
 
 ## Regulations
 
-The Casinos Association of Spain, following EU regulations, recommends to use the any distancee method to detect similarities in the lists with passports and whole names.
+The [Casinos Association of Spain](www.asociaciondecasinos.org/), following EU regulations, recommends to use the any distancee method to detect similarities in the lists with passports and whole names.
 
 SQLite comes with the [Levenshtein distance function](https://en.wikipedia.org/wiki/Levenshtein_distance) named as [spellfix](https://www.sqlite.org/spellfix1.html) in the form of [loadable extension](https://www.sqlite.org/loadext.html). 
 
