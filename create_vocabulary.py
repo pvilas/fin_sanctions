@@ -11,10 +11,6 @@ def create_vocabulary():
     # import apsw type connection
     cursor=apsw_con.cursor()
 
-    # only in case of
-    cursor.execute('delete from spell_whole_name; delete from spell_passport;')
-
-
     cursor2 = apsw_con.cursor()
 
     cursor3 = apsw_con.cursor()
