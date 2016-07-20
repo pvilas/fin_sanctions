@@ -107,8 +107,7 @@ try:
     entities = root.findall('INDIVIDUAL')
 
     # logger.debug(entities)
-
-    logger.info("{0} entities to parse.".format(len(entities)))
+    logger.info('Processing {0} entities...'.format(len(entities)))
 
     for e in entities:
 

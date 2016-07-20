@@ -5,6 +5,7 @@ apsw_con.loadextension('./fin_sanctions/spellfix1.so')
 print('spellfix1 extension loaded')
 
 
+
 def create_vocabulary():
     """ populates the vocabulary tables to do spellfix - Levenshtein """
 
@@ -42,6 +43,12 @@ def create_vocabulary():
     # insert into spell_whole_name(word) select upper(whole_name) from names;
     # insert into spell_passport(word) select upper(number) from passports;     
 
+
+
+print ("Creating vocabulary tables...")
+cursor=apsw_con.cursor()
+cursor.execute('create virtual table spell_whole_name using spellfix1;create virtual table spell_passport using spellfix1;')
+print ("Created.")
 
 print "Creating vocabulary, wait please..."
 create_vocabulary()
