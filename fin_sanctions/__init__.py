@@ -22,7 +22,7 @@ try:
     apsw_con.loadextension('./fin_sanctions/spellfix1.so')
     app.logger.debug('spellfix1 extension loaded')
 except Exception, e:
-    app.logger.error("Failed to load apsw machinery")
+    app.logger.error("Failed to load apsw machinery: {0}".format(e))
     exit(1)
 
 __author__ = 'https://github.com/pvilas'

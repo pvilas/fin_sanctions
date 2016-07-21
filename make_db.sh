@@ -5,9 +5,9 @@ echo "Deleting old backup"
 rm fin_sanctions/list.db.old
 echo "Creating new backup"
 mv fin_sanctions/list.db fin_sanctions/list.db.old
-echo "Loading spellfix extension and creating indexes"
+echo "Touching new db"
 cd fin_sanctions
-sqlite3 list.db < load_spellext.sql
+sqlite3 list.db 
 cd ..
 echo "Creating new (empty) db"
 python make_db.py

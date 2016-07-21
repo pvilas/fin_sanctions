@@ -93,12 +93,12 @@ If none error happens, you would take a look at the database structure
 ```
 sqlite3 fin_sanctions/list.db
 .tables
-sqlite> .load .fin_sanctions//spellfix1.so
+sqlite> .load .fin_sanctions/spellfix1.so
 sqlite> select word, distance from spell_whole_name where word match 'hussein';
 .quit
 ```
 
-The distance field indicates the number of inserts, deletes or substitutions to transform one word into other.
+The distance field is proportional to the number of inserts, deletes or substitutions to transform one word into other.
 
 ### Run the flask server
 
