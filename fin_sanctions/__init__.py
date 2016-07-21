@@ -20,7 +20,7 @@ try:
     import apsw
     apsw_con=apsw.Connection(db_path)
     apsw_con.enableloadextension(True)
-    apsw_con.loadextension(spellfix_ext_path)
+    apsw_con.loadextension(spellfix_ext_path, 'sqlite3_spellfix_init')
     app.logger.debug('spellfix1 extension loaded')
 except Exception, e:
     app.logger.error("Failed to load apsw machinery: {0}".format(e))
