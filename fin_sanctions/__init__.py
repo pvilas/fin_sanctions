@@ -10,6 +10,7 @@ from sqlalchemy import event
 
 app = Flask(__name__)
 db_path = str(os.path.join(app.root_path, 'list.db'))
+spellfix_ext_path = str(os.path.join(app.root_path, 'spellfix1.so'))
 
 #
 # we use apsw to access directly to sqlite and its extensions
@@ -19,7 +20,7 @@ try:
     import apsw
     apsw_con=apsw.Connection(db_path)
     apsw_con.enableloadextension(True)
-    apsw_con.loadextension('./fin_sanctions/spellfix1.so')
+    apsw_con.loadextension(spellfix_ext_path)
     app.logger.debug('spellfix1 extension loaded')
 except Exception, e:
     app.logger.error("Failed to load apsw machinery: {0}".format(e))
