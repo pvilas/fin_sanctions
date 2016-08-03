@@ -105,7 +105,7 @@ def names_formatter(view, context, model, name):
             'title="Search google images">i</a>'.format(name)
 
         # search wikipedia
-        w = u'<a href="http://members.worldcompilance.com/'\
+        w = u'<a href="https://en.wikipedia.org/'\
             'wiki/{0}" target="_blank"'\
             'title="Search wikipedia">w</a>'.format(name_under)
 
