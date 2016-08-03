@@ -1,6 +1,6 @@
 # fin_sanctions
 
-Web interface for query the lists of UN, EU and US persons, groups and entities subject to financial sanctions.
+Web interface to query the lists of UN, EU and US persons, groups and entities subject to financial sanctions.
 
 The project aims to compliment the EU regulations in the sense of detect similitudes between a given name and the lists.
 
@@ -65,7 +65,7 @@ sublime .
 
 On other directory, download sqlite's [source code](https://www.sqlite.org/download.html). 
 
-At this moment the latests version is 3.13.0, so download and unzip it, download the spellfix1 extension and compile it
+At this moment the latest version is 3.13.0, so download and unzip it, download the spellfix1 extension and compile it
 
 ```
 $ cd..
@@ -83,7 +83,7 @@ You should have spellfix1.so in your current directory. Copy it to fin_sanctions
 
 ### Make the database
 
-Now you can create download the lists and create the database. Return to the fin_sanctions directory and execute the creation script. You may read the script before to understand what is happen.
+Now you can download the lists and create the database. Return to the fin_sanctions directory and execute the creation script. You may read the script before to understand what is happen.
 
 ```
 source make_db.sh
@@ -143,10 +143,29 @@ def normalize_passport(num):
     return toS(num)
 ```
 
-## REST
+## API
 
 To be  continued...
 
+
+## Useful links
+
+- [EU European Union External Action](http://eeas.europa.eu/cfsp/sanctions/index_en.htm)
+- [UNHCR - The UN Refug ee Agency](http://www.unhcr.org/)
+- [FATF - Financial Action Task Force](http://www.fatf-gafi.org/home/)
+- [ES Comisión de Prevención de Blanqueo de Capitales](http://www.sepblac.es/espanol/home_esp.htm)
+- [CH State Secretariat for Economics Affairs](https://www.seco.admin.ch/seco/en/home/Aussenwirtschaftspolitik_Wirtschaftliche_Zusammenarbeit/Wirtschaftsbeziehungen/exportkontrollen-und-sanktionen/sanktionen-embargos.html)
+- [UK Office of Financial Sanctions Implementation Lists](https://www.gov.uk/government/publications/financial-sanctions-consolidated-list-of-targets)
+- [US Office of Foreign Assets Control](https://sanctionssearch.ofac.treas.gov/)
+- [US Department of the Treasury](https://www.treasury.gov/resource-center/sanctions/Pages/default.aspx)
+- [CA current sanctions](http://www.international.gc.ca/sanctions/countries-pays/index.aspx?lang=eng)
+- [AU current sanctions](http://dfat.gov.au/international-relations/security/sanctions/sanctions-regimes/pages/sanctions-regimes.aspx)
+- [SG Monetary Authority of Singapore](http://www.mas.gov.sg/Regulations-and-Financial-Stability/Anti-Money-Laundering-Countering-The-Financing-Of-Terrorism-And-Targeted-Financial-Sanctions.aspx)
+- [HK Monetary Authority](http://www.hkma.gov.hk/eng/index.shtml)
+- [The Egmont Group](http://www.egmontgroup.org/)
+- [Transparency International](http://www.transparency.org/)
+- [Human Rights Watch](https://www.hrw.org/)
+- [Sanctions wiki](http://www.sanctionswiki.org/Main_Page)
 
 ## License
 

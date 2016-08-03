@@ -14,7 +14,6 @@ LARGE_DESCRIPTION_TYPE_LEN = 2048
 DEFAULT_URL_TYPE_LEN = 256
 
 
-
 def toS(cadena):
     return unicodedata.normalize('NFKD', unicode(cadena)).encode('ascii', 'ignore')
 

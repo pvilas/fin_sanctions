@@ -8,10 +8,10 @@ from jinja2 import Markup
 import urllib
 
 
-
 import models
 
-list_titulo=''
+list_titulo = ''
+
 
 def join_commas(str_list, separator=u", ", final_mark='<br/>'):
     """ joins string with commas and appends a final mark """
@@ -87,8 +87,37 @@ def names_formatter(view, context, model, name):
     """ Format name's of an entity """
     str_names = u''
     for n in model.names:  # for each name
+        # search google
+        name = urllib.quote_plus(n.whole_name.
+                                 encode("ascii", "ignore"))
+
+        name_under = urllib.quote_plus(n.whole_name.
+                                       replace(" ", "_").
+                                       encode("ascii", "ignore"))
+
+        g = u'<a href="https://www.google.com/'\
+            'webhp?#safe=off&q={0}" target="_blank"'\
+            'title="Search google">g</a>'.format(name)
+
+        # search images
+        i = u'<a href="https://www.google.com/imghp?hl=en&tbm=isch&'\
+            'source=og&tab=wi&q={0}" target="_blank"'\
+            'title="Search google images">i</a>'.format(name)
+
+        # search wikipedia
+        w = u'<a href="http://members.worldcompilance.com/'\
+            'wiki/{0}" target="_blank"'\
+            'title="Search wikipedia">w</a>'.format(name_under)
+
+        # search worldcopilance
+        c = u'<a href="https://members.worldcompliance.com/MetaWatch2.aspx?'\
+            'txtSearchBox={0}" target="_blank"'\
+            'title="Search worldcompilance">c</a>'.format(name_under)
+
+        postfix = u" [{0} | {1} | {2} | {3}]".format(g, i, w, c)
+
         str_names += join_commas(
-            [n.whole_name + format_country(n.language_id)],
+            [n.whole_name + format_country(n.language_id) + postfix],
             separator=" ")
 
     return Markup(str_names)
@@ -192,16 +221,16 @@ class EntityModelView(GenericModelView):
     list_template = 'admin/entity/list.html'
 
     list_titulo = None
+
     @expose('/', methods=('GET', 'POST'))
     def index_view(self):
         # titol nomes amb un us
         if self.list_titulo is not None:
             self._template_args['list_titulo'] = self.list_titulo
-            self.list_titulo=None
+            self.list_titulo = None
 
         app.logger.debug('helooo')
         return super(EntityModelView, self).index_view()
-
 
     def _place_formatter(view, context, model, name):
         """ Format the url of the pdf to a link """
@@ -292,7 +321,7 @@ class PlaceModelView(GenericModelView):
 # inicialització admin
 admin = Admin(app, name='EU/UN Sanction List', template_mode='bootstrap3')
 # admin.add_view(ModelView(models.User, db.session))
-ent_ctrl=EntityModelView(models.Entity, db.session)
+ent_ctrl = EntityModelView(models.Entity, db.session)
 admin.add_view(ent_ctrl)
 admin.add_view(LegalBasisModelView(models.LegalBasis, db.session))
 admin.add_view(ProgrammeModelView(models.Programme, db.session))
