@@ -123,6 +123,9 @@ The [Casinos Association of Spain](www.asociaciondecasinos.org/), following EU r
 
 SQLite comes with the [Levenshtein distance function](https://en.wikipedia.org/wiki/Levenshtein_distance) named as [spellfix](https://www.sqlite.org/spellfix1.html) in the form of [loadable extension](https://www.sqlite.org/loadext.html). 
 
+
+## Id number normalization
+
 On the database, the passport number is *normalized* before to store it. Each time we query for a passport the server normalizes it before perform the search. The exact normalization code is:
 
 ```python
