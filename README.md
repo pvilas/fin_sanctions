@@ -119,10 +119,11 @@ You must run the *make_db.sh* script one time a month to update the lists.
 
 ## Regulations
 
-The [Casinos Association of Spain](www.asociaciondecasinos.org/), following EU regulations, recommends to use the any distancee method to detect similarities in the lists with passports and whole names.
+The [Casinos Association of Spain](www.asociaciondecasinos.org/), following EU regulations, recommends to use the edit or Levenshtein distance method to detect similarities in the lists with passports and whole names. 
 
 SQLite comes with the [Levenshtein distance function](https://en.wikipedia.org/wiki/Levenshtein_distance) named as [spellfix](https://www.sqlite.org/spellfix1.html) in the form of [loadable extension](https://www.sqlite.org/loadext.html). 
 
+We use this extension to perform quick searches.
 
 ## Id number normalization
 
