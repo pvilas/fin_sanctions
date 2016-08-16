@@ -1,16 +1,18 @@
 # fin_sanctions
 
-Web interface to query the lists of UN, EU and US persons, groups and entities subject to financial sanctions.
+Web interface to query the lists of UN, EU and US of people, groups and entities that are under financial sanctions.
 
 The project aims to compliment the EU regulations in the sense of detect similitudes between a given name and the lists.
 
-We use the Levenshtein distance in order to detect matches. 
+We use the Levenshtein distance in order to detect matches. We use the spellfix sqlite extension
 
 The project includes a Flask web server and a script that updates the local database with the sanction lists.
 
-It includes also *connectors* that translates the different lists (EU, UN, US) to a common database format. More lists can be added to the database only programming a suitable new connector.
+It includes *connectors* that translates the different lists (EU, UN, US) to a common database format. More lists can be added to the database only programming a suitable new connector.
 
-You would have some web, python and linux/mac experience to install fin_sanctions. 
+You should have some web, python and linux/mac experience to install fin_sanctions. 
+
+
 
 ## Lists
 
@@ -20,8 +22,6 @@ You would have some web, python and linux/mac experience to install fin_sanction
 
 
 ## Installation
-
-The only issue with the installation is the need of the spellfix sqlite extension. We must compile it on the local system.
 
 
 Clone fin_sanctions
@@ -46,7 +46,7 @@ pip install Flask-security
 pip install Distance
 ```
 
-The apsw provides direct access to sqlite. We will use it do get the fts and spellfix extensions. It is possible to use it with the traditional db-api python driver. The [official](http://rogerbinns.github.io/apsw/index.html) documentation is extensive. The only issue is with virtualenv, we have installed the library without the *--user* parameter. Moreover, note the enable-all-extensions option.More information is on the [download](http://rogerbinns.github.io/apsw/download.html#easy-install-pip-pypi) page. Make sure you have the virtual environment activated before the installation.
+The apsw sqlite driver provides direct access to sqlite. We use it do get direct access to the fts and spellfix extensions. The [official](http://rogerbinns.github.io/apsw/index.html) documentation is extensive. We have installed the library without the *--user* parameter and be aware of the enable-all-extensions option. More information is on the [download](http://rogerbinns.github.io/apsw/download.html#easy-install-pip-pypi) page. Make sure you have the virtual environment activated before the installation.
 
 ```
 pip install https://github.com/rogerbinns/apsw/releases/download/3.13.0-r1/apsw-3.13.0-r1.zip \
@@ -78,18 +78,19 @@ $ wget $ wget http://sqlite.org/cgi/src/raw/ext/misc/spellfix.c?name=b9065af7ab1
 $ gcc -fPIC -shared spellfix.c -o spellfix1.so
 ```
 
-You should have spellfix1.so in your current directory. Copy it to fin_sanctions/fin_sanctions directory, that is, the same directory than ```list.db```.
+You should have spellfix1.so in your current directory. Copy it to fin_sanctions/fin_sanctions directory.
 
 
 ### Make the database
 
-Now you can download the lists and create the database. Return to the fin_sanctions directory and execute the creation script. You may read the script before to understand what is happen.
+Now you can download the lists and create the database. Return to the fin_sanctions directory and execute the creation script. You may read the script to understand what is happen.
 
 ```
 source make_db.sh
 ```
 
-If none error happens, you would take a look at the database structure
+If none error happened you would take a look at the database structure
+
 ```
 sqlite3 fin_sanctions/list.db
 .tables
@@ -119,15 +120,12 @@ You must run the *make_db.sh* script one time a month to update the lists.
 
 ## Regulations
 
-The [Casinos Association of Spain](www.asociaciondecasinos.org/), following EU regulations, recommends to use the edit or Levenshtein distance method to detect similarities in the lists with passports and whole names. 
+The [Casinos Association of Spain](www.asociaciondecasinos.org/), following EU regulations, recommends to use the edit or Levenshtein distance method to detect similarities between the lists and given passports numbers or whole names. 
 
-SQLite comes with the [Levenshtein distance function](https://en.wikipedia.org/wiki/Levenshtein_distance) named as [spellfix](https://www.sqlite.org/spellfix1.html) in the form of [loadable extension](https://www.sqlite.org/loadext.html). 
-
-We use this extension to perform quick searches.
 
 ## Id number normalization
 
-On the database, the passport number is *normalized* before to store it. Each time we query for a passport the server normalizes it before perform the search. The exact normalization code is:
+On the database, the passport number is *normalized* before storing it. Each time we query for a passport the server normalizes it before perform the search. The exact normalization code is:
 
 ```python
 
