@@ -1,6 +1,6 @@
 # fin_sanctions
 
-Web interface to query the lists of UN, EU and US of people, groups and entities that are under financial sanctions.
+Web interface to consult the lists of UN, EU and US of people, groups and entities that are under financial sanctions.
 
 The project aims to compliment the EU regulations in the sense of detect similitudes between a given name and the lists.
 
