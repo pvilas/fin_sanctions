@@ -4,7 +4,7 @@ Web interface to consult the lists of UN, EU and US of people, groups and entiti
 
 The project aims to compliment the EU regulations in the sense of detect similitudes between a given name and the lists.
 
-We use the Levenshtein distance in order to detect matches. We use the spellfix sqlite extension
+We use the Levenshtein distance in order to detect matches.
 
 The project includes a Flask web server and a script that updates the local database with the sanction lists.
 
