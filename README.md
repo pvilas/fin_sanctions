@@ -1,4 +1,4 @@
-# fin_sanctions
+# UN, EU and US Finnnacial Sanctions
 
 Web interface to consult the lists of UN, EU and US of people, groups and entities that are under financial sanctions.
 
