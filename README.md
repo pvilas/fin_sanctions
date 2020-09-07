@@ -1,4 +1,4 @@
-# UN, EU and US Financial Sanctions
+# People, groups and entities in UN, EU and US Financial Sanctions Lists
 
 Web interface to consult the lists of UN, EU and US of people, groups and entities that are under financial sanctions.
 
